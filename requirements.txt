@@ -1,0 +1,6 @@
+azure-identity
+azure-keyvault-secrets
+pydantic
+loguru
+python-dotenv
+omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main
