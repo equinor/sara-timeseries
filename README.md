@@ -9,6 +9,10 @@ The **SARA Omnia** provides an automated process to upload data to Omnia Timeser
 | CLIENT_ID     | Omnia Timeseries Client ID     |
 | CLIENT_SECRET | Omnia Timeseries Client Secret |
 
+### Fast API App
+
+App is running default at `localhost:8000/docs`
+
 ### Build the Docker image
 
 ```bash

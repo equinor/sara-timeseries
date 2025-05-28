@@ -3,4 +3,6 @@ azure-keyvault-secrets
 pydantic
 loguru
 python-dotenv
+fastapi
+uvicorn
 omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main
