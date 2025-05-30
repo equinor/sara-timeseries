@@ -12,7 +12,7 @@ class OmniaAPI:
         self.setup_routes()
 
     def setup_routes(self):
-        @self.router.get("/write")
+        @self.router.post("/datapoint")
         async def forward_data(data: RequestModel):
             id = self.omnia_service.get_or_add_timeseries(
                 name=data.name,
@@ -28,7 +28,7 @@ class OmniaAPI:
                 logger.error("Failed to get or add timeseries")
                 return {"error": "Failed to get or add timeseries"}
 
-            response = await self.omnia_service.write_data(
+            response = await self.omnia_service.add_datapoint_to_timeseries(
                 id, data.value, data.timestamp
             )
             return response
