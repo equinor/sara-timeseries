@@ -71,47 +71,35 @@ class OmniaService:
             logger.error(f"Error retrieving or adding timeseries: {e}")
             raise
 
-    def validate_timestamp(timestamp: str) -> bool:
-        """
-        Validates the timestamp format.
-        Returns True if valid, False otherwise.
-        """
-        try:
-            datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-            return True
-        except ValueError:
-            logger.error(f"Invalid timestamp format: {timestamp}")
-            return False
-
-    def write_data(id: str, value: float, timestamp: str) -> dict:
+    def add_datapoint_to_timeseries(
+        self, id: str, value: float, timestamp: datetime
+    ) -> dict:
         """
         Writes data to the timeseries with the given ID.
         Returns the response from the API.
         """
-        # TODO: GET values from parameters or environment variables
-        # now_utc = datetime.now(timezone.utc)
-        # now_utc_str = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+        timestamp_str = timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
         datapoint = DatapointModel(
-            time=timestamp,
+            time=timestamp_str,
             value=value,
             status=TIMESERIES_STATUS_GOOD,
         )
         data = DatapointsPostRequestModel(datapoints=[datapoint])
         try:
-            response = API.write_data(id, data)
+            response = self.api.add_datapoint_to_timeseries(id, data)
             return response
         except Exception as e:
             logger.error(f"Error writing data to timeseries {id}: {e}")
             raise
 
-    def cleanup_timeseries(id: str) -> None:
+    def cleanup_timeseries(self, id: str) -> None:
         """
         Cleans up the timeseries with the given ID.
         Deletes the timeseries from the API.
         """
         # TODO: Remove when we use PROD environment
         try:
-            response = API.delete_timeseries_by_id(id)
+            response = self.api.delete_timeseries_by_id(id)
             logger.info(f"Successfully deleted timeseries {id}: {response}")
         except Exception as e:
             logger.error(f"Error deleting timeseries {id}: {e}")
