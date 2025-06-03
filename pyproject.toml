@@ -8,7 +8,7 @@ authors = [{ name = "Equinor ASA", email = "fg_robots_dev@equinor.com" }]
 description = "Component for uploading datapoints to Omnia Timeseries"
 readme = "README.md"
 requires-python = ">=3.12"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 classifiers = [
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
@@ -40,7 +40,7 @@ dynamic = ["version"]
 repository = "https://github.com/equinor/omnia-sara.git"
 
 [project.optional-dependencies]
-dev = ["black", "mypy", "pip-tools", "pytest"]
+dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
