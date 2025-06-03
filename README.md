@@ -9,6 +9,20 @@ The **SARA Omnia** provides an automated process to upload data to Omnia Timeser
 | CLIENT_ID     | Omnia Timeseries Client ID     |
 | CLIENT_SECRET | Omnia Timeseries Client Secret |
 
+## Dependencies
+
+The dependencies used for this package are listed in `pyproject.toml` and pinned in `requirements.txt`. This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools)) for this:
+
+```
+pip-compile --output-file=requirements.txt pyproject.toml
+```
+
+To update the requirements to the latest versions, run the same command with the `--upgrade` flag:
+
+```
+pip-compile --output-file=requirements.txt pyproject.toml --upgrade
+```
+
 ### Fast API App
 
 App is running default at `localhost:8000/docs`

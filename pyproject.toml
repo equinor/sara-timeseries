@@ -1,10 +1,50 @@
+[build-system]
+requires = ["setuptools>=64.0", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sara-omnia"
+authors = [{ name = "Equinor ASA", email = "fg_robots_dev@equinor.com" }]
+description = "Component for uploading datapoints to Omnia Timeseries"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+classifiers = [
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+  "azure-identity",
+  "azure-keyvault-secrets",
+  "pydantic",
+  "loguru",
+  "python-dotenv",
+  "fastapi",
+  "uvicorn",
+  "omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main",
+]
+dynamic = ["version"]
+
+[project.urls]
+repository = "https://github.com/equinor/omnia-sara.git"
+
+[project.optional-dependencies]
+dev = ["black", "mypy", "pip-tools", "pytest"]
+
 [tool.pytest.ini_options]
-pythonpath = [
-  "."
-]
-testpaths = [
-    "tests",
-]
+pythonpath = ["."]
+testpaths = ["tests"]
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -14,3 +54,6 @@ strict_optional = true
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+
+[tool.black]
+line_length = 88
