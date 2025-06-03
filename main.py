@@ -4,24 +4,26 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+# setup_logger()
+from loguru import logger
+
 from sara_omnia.api import OmniaAPI
 from sara_omnia.logger import setup_logger
 from sara_omnia.omnia_service import OmniaService
 
 setup_logger()
-# from loguru import logger
 
 load_dotenv()
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
 TENANT_ID = os.environ.get("TENANT_ID")
-PORT = os.environ.get("PORT")
-HOST = os.environ.get("HOST")
+PORT = int(os.environ.get("PORT", 8081))
+HOST = os.environ.get("HOST", "sara-omnia")
 
 if not CLIENT_ID or not CLIENT_SECRET or not TENANT_ID:
     raise RuntimeError(
-        "CLIENT_ID, CLIENT_SECRET, and TENANT_ID must be provided via environment variables."
+        "CLIENT_ID, CLIENT_SECRET, TENANT_ID must be provided via environment variables."
     )
 
 # Create FastAPI app and setup routes
