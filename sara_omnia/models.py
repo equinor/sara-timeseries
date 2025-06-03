@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from omnia_timeseries.models import MessageModel
 from pydantic import BaseModel
 
 
@@ -14,3 +15,8 @@ class RequestModel(BaseModel):
     timestamp: datetime
     step: bool = True
     metadata: dict = {}
+
+
+class ResponseModel(BaseModel):
+    timeseriesId: str
+    details: MessageModel

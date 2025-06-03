@@ -5,6 +5,8 @@ from loguru import logger
 from omnia_timeseries.api import (
     DatapointModel,
     DatapointsPostRequestModel,
+    GetTimeseriesResponseModel,
+    MessageModel,
     TimeseriesAPI,
     TimeseriesEnvironment,
     TimeseriesRequestItem,
@@ -20,7 +22,7 @@ class OmniaService:
         client_secret: str,
         tenant_id: str,
         environment: TimeseriesEnvironment = TimeseriesEnvironment.Test(),
-    ):
+    ) -> None:
         """
         Initializes the OmniaService with Azure credentials.
         """
@@ -33,14 +35,14 @@ class OmniaService:
 
     def get_or_add_timeseries(
         self,
-        name: str,  #  xxEyyNzzU_inspectionDescription_tagId_robotName
-        facility: str,  # installation_code
-        externalId: str,  # inspection_id
-        description: str,  # inspection_type
-        unit: str,  # unit
-        assetId: str,  # installation_code?
+        name: str,
+        facility: str,
+        externalId: str,
+        description: str,
+        unit: str,
+        assetId: str,
         step: bool = True,
-        metadata: dict = {},  # {"isar_id": isar_id, "tag_id": tag_id, "inspection_description", "robot_name": robot_name, "x": x, "y": y, "z": z}
+        metadata: dict = {},
     ) -> str:
         """
         Retrieves or adds a timeseries
@@ -57,7 +59,9 @@ class OmniaService:
             metadata=metadata,
         )
         try:
-            response = self.api.get_or_add_timeseries([timeSeriesRequestItem])
+            response: GetTimeseriesResponseModel = self.api.get_or_add_timeseries(
+                [timeSeriesRequestItem]
+            )
             if response["data"]["items"]:
                 return response["data"]["items"][0]["id"]
             else:
@@ -66,9 +70,9 @@ class OmniaService:
             logger.error(f"Error retrieving or adding timeseries: {e}")
             raise
 
-    async def add_datapoint_to_timeseries(
+    def add_datapoint_to_timeseries(
         self, id: str, value: float, timestamp: datetime
-    ) -> dict:
+    ) -> MessageModel:
         """
         Writes data to the timeseries with the given ID.
         Returns the response from the API.
@@ -80,7 +84,7 @@ class OmniaService:
             status=TIMESERIES_STATUS_GOOD,
         )
         data = DatapointsPostRequestModel(datapoints=[datapoint])
-        return await self.api.add_datapoint_to_timeseries(id, data)
+        return self.api.write_data(id, data)
 
     def cleanup_timeseries(self, id: str) -> None:
         """

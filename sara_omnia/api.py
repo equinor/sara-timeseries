@@ -1,7 +1,8 @@
 from fastapi import APIRouter, FastAPI, HTTPException
 from loguru import logger
+from omnia_timeseries.api import MessageModel
 
-from sara_omnia.models import RequestModel
+from sara_omnia.models import RequestModel, ResponseModel
 from sara_omnia.omnia_service import OmniaService
 
 
@@ -13,9 +14,9 @@ class OmniaAPI:
 
     def setup_routes(self) -> None:
         @self.router.post("/datapoint")
-        async def forward_data(data: RequestModel) -> dict:
+        def forward_data(data: RequestModel) -> ResponseModel:
             try:
-                id = self.omnia_service.get_or_add_timeseries(
+                id: str = self.omnia_service.get_or_add_timeseries(
                     name=data.name,
                     facility=data.facility,
                     externalId=data.externalId,
@@ -38,7 +39,7 @@ class OmniaAPI:
                 )
 
             try:
-                response = await self.omnia_service.add_datapoint_to_timeseries(
+                response: MessageModel = self.omnia_service.add_datapoint_to_timeseries(
                     id, data.value, data.timestamp
                 )
             except Exception as e:
@@ -47,7 +48,7 @@ class OmniaAPI:
                     status_code=500, detail="Failed to add datapoint to timeseries"
                 )
 
-            return response
+            return ResponseModel(timeseriesId=id, details=response)
 
     def include_in_app(self, app: FastAPI) -> None:
         app.include_router(self.router)

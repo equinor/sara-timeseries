@@ -4,9 +4,6 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-# setup_logger()
-from loguru import logger
-
 from sara_omnia.api import OmniaAPI
 from sara_omnia.logger import setup_logger
 from sara_omnia.omnia_service import OmniaService
