@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -9,6 +11,6 @@ class RequestModel(BaseModel):
     unit: str
     assetId: str
     value: float
-    timestamp: str
+    timestamp: datetime
     step: bool = True
     metadata: dict = {}

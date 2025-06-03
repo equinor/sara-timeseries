@@ -1,29 +1,16 @@
-from loguru import logger
-import os
 import sys
+
+from loguru import logger
 
 
 def setup_logger() -> None:
     """
-    Configures Loguru logger based on the ENVIRONMENT environment variable.
+    Configures Loguru logger.
     """
 
-    environment = os.getenv("ENVIRONMENT", "production").lower()
-
     logger.remove()
-
-    if environment == "development":
-        logger.add(
-            sys.stdout,
-            level="DEBUG",
-            format="<green>{time}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>",
-        )
-        print("Logger configured for development environment.")
-    else:
-        logger.add(
-            sys.stdout,
-            level="INFO",
-            format="{time} | {level} | {message}",
-        )
-        logger.add(sys.stderr, level="ERROR", format="{time} | {level} | {message}")
-        print("Logger configured for production environment.")
+    logger.add(
+        sys.stdout,
+        level="INFO",
+        format="<green>{time:YYYY-MM-DD at HH:mm:ss zz}</green> | <level>{level}</level> | <level>{message}</level>",
+    )

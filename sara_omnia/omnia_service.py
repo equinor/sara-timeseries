@@ -1,8 +1,6 @@
 from datetime import datetime
 
 from azure.identity import ClientSecretCredential
-
-# setup_logger()
 from loguru import logger
 from omnia_timeseries.api import (
     DatapointModel,
@@ -11,9 +9,6 @@ from omnia_timeseries.api import (
     TimeseriesEnvironment,
     TimeseriesRequestItem,
 )
-
-# from sara_omnia.logger import setup_logger
-
 
 TIMESERIES_STATUS_GOOD = 192
 
@@ -24,7 +19,7 @@ class OmniaService:
         client_id: str,
         client_secret: str,
         tenant_id: str,
-        environment=TimeseriesEnvironment.Test(),
+        environment: TimeseriesEnvironment = TimeseriesEnvironment.Test(),
     ):
         """
         Initializes the OmniaService with Azure credentials.
@@ -71,7 +66,7 @@ class OmniaService:
             logger.error(f"Error retrieving or adding timeseries: {e}")
             raise
 
-    def add_datapoint_to_timeseries(
+    async def add_datapoint_to_timeseries(
         self, id: str, value: float, timestamp: datetime
     ) -> dict:
         """
@@ -85,12 +80,7 @@ class OmniaService:
             status=TIMESERIES_STATUS_GOOD,
         )
         data = DatapointsPostRequestModel(datapoints=[datapoint])
-        try:
-            response = self.api.add_datapoint_to_timeseries(id, data)
-            return response
-        except Exception as e:
-            logger.error(f"Error writing data to timeseries {id}: {e}")
-            raise
+        return await self.api.add_datapoint_to_timeseries(id, data)
 
     def cleanup_timeseries(self, id: str) -> None:
         """
