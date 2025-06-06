@@ -1,0 +1,46 @@
+name: Deploy to Staging
+
+# Only one workflow in a concurrency group may run at a time
+concurrency:
+  group: staging-concurrency
+  cancel-in-progress: true
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-push-release-to-dev-cr:
+    name: Update containers in dev with version tag
+    uses: ./.github/workflows/publish_component.yml
+    with:
+      Registry: auroradevacr.azurecr.io
+      ImageName: robotics/sara-timeseries
+      Tag: ${{ github.event.release.tag_name }}
+    secrets:
+      RegistryUsername: ${{ secrets.ROBOTICS_AURORADEVACR_USERNAME }}
+      RegistryPassword: ${{ secrets.ROBOTICS_AURORADEVACR_PASSWORD }}
+
+  build-and-push-release-to-prod-cr:
+    name: Build and push containers to auroraprodcr for Staging/Production
+    uses: ./.github/workflows/publish_component.yml
+    with:
+      Registry: auroraprodacr.azurecr.io
+      ImageName: robotics/sara-timeseries
+      Tag: ${{ github.event.release.tag_name }}
+    secrets:
+      RegistryUsername: ${{ secrets.ROBOTICS_AURORAPRODACR_USERNAME }}
+      RegistryPassword: ${{ secrets.ROBOTICS_AURORAPRODACR_PASSWORD }}
+
+  update-deployment-in-staging:
+    name: Update deployment in Staging
+    needs: build-and-push-release-to-prod-cr
+    uses: ./.github/workflows/update_aurora_deployment.yml
+    with:
+      Environment: staging
+      Registry: auroraprodacr.azurecr.io
+      ImageName: robotics/sara-timeseries
+      Tag: ${{ github.event.release.tag_name }}
+      AuthorName: ${{ github.event.release.author.login }}
+    secrets:
+      DeployKey: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}

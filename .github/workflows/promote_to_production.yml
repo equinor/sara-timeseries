@@ -1,0 +1,43 @@
+name: Promote to Production
+
+# Only one workflow in a concurrency group may run at a time
+concurrency:
+  group: production-concurrency
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+jobs:
+  get_staging_version:
+    name: Get version from staging
+    outputs:
+      versionTag: ${{ steps.get_version_tag.outputs.tag }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout infrastructure
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          repository: equinor/analytics-infrastructure
+          ssh-key: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}
+
+      - name: Get Sara Timeseries version in staging
+        id: get_version_tag
+        run: |
+          TAG_LINE_NUMBER=$(($(grep -n "auroraprodacr.azurecr.io/robotics/sara-timeseries" k8s_kustomize/overlays/staging/kustomization.yaml |  cut --delimiter=":" --fields=1)+1))
+          VERSION_TAG=$(sed -n "${TAG_LINE_NUMBER}p" k8s_kustomize/overlays/staging/kustomization.yaml  |  cut --delimiter=":" --fields=2)
+          echo "tag=$VERSION_TAG" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Update deployment in Production
+    needs: get_staging_version
+    uses: ./.github/workflows/update_aurora_deployment.yml
+    with:
+      Environment: production
+      Tag: ${{ needs.get_staging_version.outputs.versionTag }}
+      Registry: auroraprodacr.azurecr.io
+      ImageName: robotics/sara-timeseries
+      AuthorName: ${{ github.actor }}
+    secrets:
+      DeployKey: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}
