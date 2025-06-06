@@ -4,19 +4,19 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from sara_omnia.api import OmniaAPI
-from sara_omnia.logger import setup_logger
-from sara_omnia.omnia_service import OmniaService
+from sara_timeseries.api import OmniaAPI
+from sara_timeseries.logger import setup_logger
+from sara_timeseries.omnia_service import OmniaService
 
 setup_logger()
 
 load_dotenv()
 
-CLIENT_ID = os.environ.get("CLIENT_ID")
-CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-TENANT_ID = os.environ.get("TENANT_ID")
-PORT = int(os.environ.get("PORT", 8081))
-HOST = os.environ.get("HOST", "sara-omnia")
+CLIENT_ID = os.environ.get("TIMESERIES_CLIENT_ID")
+CLIENT_SECRET = os.environ.get("TIMESERIES_CLIENT_SECRET")
+TENANT_ID = os.environ.get("TIMESERIES_TENANT_ID")
+PORT = int(os.environ.get("PORT", 8200))
+HOST = os.environ.get("HOST", "sara-timeseries")
 
 if not CLIENT_ID or not CLIENT_SECRET or not TENANT_ID:
     raise RuntimeError(

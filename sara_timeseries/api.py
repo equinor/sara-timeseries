@@ -2,8 +2,8 @@ from fastapi import APIRouter, FastAPI, HTTPException
 from loguru import logger
 from omnia_timeseries.api import MessageModel
 
-from sara_omnia.models import RequestModel, ResponseModel
-from sara_omnia.omnia_service import OmniaService
+from sara_timeseries.models import RequestModel, ResponseModel
+from sara_timeseries.omnia_service import OmniaService
 
 
 class OmniaAPI:

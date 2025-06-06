@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, Mock
 import pytest
 from omnia_timeseries.api import MessageModel
 
-from sara_omnia.omnia_service import OmniaService
+from sara_timeseries.omnia_service import OmniaService
 
 
 @pytest.fixture
