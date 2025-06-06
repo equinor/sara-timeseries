@@ -16,11 +16,10 @@ CLIENT_ID = os.environ.get("TIMESERIES_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("TIMESERIES_CLIENT_SECRET")
 TENANT_ID = os.environ.get("TIMESERIES_TENANT_ID")
 PORT = int(os.environ.get("PORT", 8200))
-HOST = os.environ.get("HOST", "sara-timeseries")
 
 if not CLIENT_ID or not CLIENT_SECRET or not TENANT_ID:
     raise RuntimeError(
-        "CLIENT_ID, CLIENT_SECRET, TENANT_ID must be provided via environment variables."
+        "TIMESERIES_CLIENT_ID, TIMESERIES_CLIENT_SECRET, TIMESERIES_TENANT_ID must be provided via environment variables."
     )
 
 # Create FastAPI app and setup routes
@@ -34,4 +33,5 @@ omnia_api = OmniaAPI(omnia_service=omnia_service)
 omnia_api.include_in_app(app)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host=HOST, port=PORT, reload=True)
+    # Forcing uvicorn to run on 0.0.0.0
+    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)
