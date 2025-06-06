@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     build-essential \
     gcc \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -u 1000 -ms /bin/bash appuser
