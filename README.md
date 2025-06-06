@@ -31,7 +31,7 @@ App is running default at `localhost:8000/docs`
 ### Build the Docker image
 
 ```bash
-docker build -t sara-imeseries:test .
+docker build -t sara-timeseries .
 ```
 
 Export env vars
@@ -41,3 +41,7 @@ export TIMESERIES_CLIENT_ID="<client-id-to-timeseries-api>"
 export TIMESERIES_CLIENT_SECRET="<client-secret-to-timeseries-api>"
 export TIMESERIES_TENANT_ID="<tenant-id-to-timeseries-api>"
 ```
+
+### Run the Docker image
+
+docker run --env-file ./.env sara-timeseries
