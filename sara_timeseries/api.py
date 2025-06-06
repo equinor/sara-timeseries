@@ -42,6 +42,12 @@ class OmniaAPI:
                 response: MessageModel = self.omnia_service.add_datapoint_to_timeseries(
                     id, data.value, data.timestamp
                 )
+                logger.info(
+                    f"Successfully uploaded datapoint to timeseries"
+                    f" with response: {response};"
+                    f" and timeseries with ID: {id}, name: {data.name}, facility: {data.facility}, description: {data.description}; "
+                    f" and datapoint with value: {data.value}, timestamp: {data.timestamp}"
+                )
             except Exception as e:
                 logger.error(f"Failed to add datapoint to timeseries: {e}")
                 raise HTTPException(
