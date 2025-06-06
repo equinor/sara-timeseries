@@ -3,7 +3,7 @@ requires = ["setuptools>=64.0", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sara-omnia"
+name = "sara-timeseries"
 authors = [{ name = "Equinor ASA", email = "fg_robots_dev@equinor.com" }]
 description = "Component for uploading datapoints to Omnia Timeseries"
 readme = "README.md"
@@ -37,7 +37,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-repository = "https://github.com/equinor/omnia-sara.git"
+repository = "https://github.com/equinor/sara-timeseries.git"
 
 [project.optional-dependencies]
 dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff"]

@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from omnia_timeseries.api import MessageModel
 
-from sara_omnia.api import OmniaAPI
-from sara_omnia.omnia_service import OmniaService
+from sara_timeseries.api import OmniaAPI
+from sara_timeseries.omnia_service import OmniaService
 
 
 @pytest.fixture
