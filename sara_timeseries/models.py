@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from omnia_timeseries.models import MessageModel
 from pydantic import BaseModel
 
 
@@ -19,4 +18,5 @@ class RequestModel(BaseModel):
 
 class ResponseModel(BaseModel):
     timeseriesId: str
-    details: MessageModel
+    statusCode: int
+    message: str

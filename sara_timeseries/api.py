@@ -54,7 +54,11 @@ class OmniaAPI:
                     status_code=500, detail="Failed to add datapoint to timeseries"
                 )
 
-            return ResponseModel(timeseriesId=id, details=response)
+            return ResponseModel(
+                timeseriesId=id,
+                statusCode=response["statusCode"],
+                message=response["message"],
+            )
 
     def include_in_app(self, app: FastAPI) -> None:
         app.include_router(self.router)
