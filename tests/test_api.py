@@ -54,11 +54,13 @@ def test_datapoint_endpoint_success(test_client: TestClient) -> None:
 
     response = test_client.post("/datapoint", json=request_payload)
     assert response.status_code == 200
+    omnia_response = MessageModel(
+        statusCode=0, message="test_message", traceId="test_trace_id"
+    )
     assert response.json() == {
         "timeseriesId": "test_timeseries_id",
-        "details": MessageModel(
-            statusCode=0, message="test_message", traceId="test_trace_id"
-        ),
+        "statusCode": omnia_response["statusCode"],
+        "message": omnia_response["message"],
     }
 
 
