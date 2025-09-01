@@ -44,10 +44,10 @@ class OmniaService:
         self,
         name: str,
         facility: str,
-        externalId: str,
+        external_id: str,
         description: str,
         unit: str,
-        assetId: str,
+        asset_id: str,
         step: bool = True,
         metadata: dict = {},
     ) -> str:
@@ -55,19 +55,19 @@ class OmniaService:
         Retrieves or adds a timeseries
         Returns the ID of the timeseries.
         """
-        timeSeriesRequestItem = TimeseriesRequestItem(
+        time_series_request_item = TimeseriesRequestItem(
             name=name,
             facility=facility,
-            externalId=externalId,
+            externalId=external_id,
             description=description,
             unit=unit,
             step=step,
-            assetId=assetId,
+            assetId=asset_id,
             metadata=metadata,
         )
         try:
             response: GetTimeseriesResponseModel = self.api.get_or_add_timeseries(
-                [timeSeriesRequestItem]
+                [time_series_request_item]
             )
             if response["data"]["items"]:
                 return response["data"]["items"][0]["id"]

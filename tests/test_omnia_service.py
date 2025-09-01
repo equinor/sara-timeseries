@@ -26,10 +26,10 @@ def test_get_or_add_timeseries(omnia_service: OmniaService) -> None:
     result = omnia_service.get_or_add_timeseries(
         name="test_name",
         facility="test_facility",
-        externalId="test_external_id",
+        external_id="test_external_id",
         description="test_description",
         unit="test_unit",
-        assetId="test_asset_id",
+        asset_id="test_asset_id",
         metadata={"key": "value"},
     )
 

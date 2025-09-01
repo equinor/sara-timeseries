@@ -27,10 +27,10 @@ class OmniaAPI:
                 id: str = self.omnia_service.get_or_add_timeseries(
                     name=data.name,
                     facility=data.facility,
-                    externalId=data.externalId,
+                    external_id=data.externalId,
                     description=data.description,
                     unit=data.unit,
-                    assetId=data.assetId,
+                    asset_id=data.assetId,
                     step=data.step,
                     metadata=data.metadata,
                 )
