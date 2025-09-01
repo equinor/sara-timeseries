@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List, Dict
 
 from azure.identity import ClientSecretCredential
 from loguru import logger
@@ -10,6 +11,12 @@ from omnia_timeseries.api import (
     TimeseriesAPI,
     TimeseriesEnvironment,
     TimeseriesRequestItem,
+)
+from omnia_timeseries.models import (
+    GetMultipleDatapointsRequestItem,
+    GetAggregatesResponseModel,
+    AggregateItemModel,
+    TimeseriesModel,
 )
 
 TIMESERIES_STATUS_GOOD = 192
@@ -98,3 +105,119 @@ class OmniaService:
         except Exception as e:
             logger.error(f"Error deleting timeseries {id}: {e}")
             raise
+
+    def read_all_timeseries_by_description(
+        self, description: str
+    ) -> List[TimeseriesModel]:
+        """
+        Reads all timeseries from the API which match the given description.
+        """
+        timeseries: GetTimeseriesResponseModel = self.api.search_timeseries(
+            description=description
+        )
+        return timeseries["data"]["items"]
+
+    def read_timeseries_by_description_and_facility(
+        self, description: str, facility: str
+    ) -> List[TimeseriesModel]:
+        """
+        Reads all timeseries from the API which match the given description and facility.
+        """
+        timeseries: List[TimeseriesModel] = self.read_all_timeseries_by_description(
+            description
+        )
+        return self._filter_timeseries_by_facility(
+            facility=facility, timeseries=timeseries
+        )
+
+    def read_data_from_multiple_timeseries(
+        self,
+        timeseries: List[TimeseriesModel],
+        start_time: datetime,
+        end_time: datetime,
+    ) -> List[Dict]:
+        """
+        Reads all datapoints in the given timeseries within the given time range.
+        """
+        requests: List[List[GetMultipleDatapointsRequestItem]] = (
+            self._build_api_requests(end_time, start_time, timeseries)
+        )
+        data: List[GetAggregatesResponseModel] = self._request_data_from_api(requests)
+        flattened_data: List[Dict] = self._flatten_data(data)
+
+        return flattened_data
+
+    @staticmethod
+    def _filter_timeseries_by_facility(
+        facility: str, timeseries: List[TimeseriesModel]
+    ) -> List[TimeseriesModel]:
+        return [series for series in timeseries if series.get("facility") == facility]
+
+    @staticmethod
+    def _data_request_must_be_split(
+        timeseries: List[TimeseriesModel], request_limit: int
+    ) -> bool:
+        return True if len(timeseries) > request_limit else False
+
+    @staticmethod
+    def _split_list(data: List, n: int) -> List[List]:
+        return [data[i : i + n] for i in range(0, len(data), n)]
+
+    @staticmethod
+    def _flatten_timeseries_response(d: TimeseriesModel) -> Dict:
+        flattened: Dict = {k: v for k, v in d.items() if k != "metadata"}
+
+        metadata: Dict = d.get("metadata")
+        if isinstance(metadata, dict):
+            flattened.update(metadata)
+
+        return flattened
+
+    def _flatten_data(self, data: List[GetAggregatesResponseModel]) -> List[Dict]:
+        squashed_data: List[AggregateItemModel] = [
+            item for d in data for item in d["data"]["items"]
+        ]
+        flattened_data: List[Dict] = [
+            {"id": d["id"], **dp}
+            for d in squashed_data
+            for dp in d.get("datapoints", [])
+        ]
+        for d in flattened_data:
+            series: GetTimeseriesResponseModel = self.api.get_timeseries_by_id(d["id"])
+            flattened_series: Dict = self._flatten_timeseries_response(
+                series["data"]["items"][0]
+            )
+            d.update(flattened_series)
+
+        return flattened_data
+
+    def _request_data_from_api(
+        self, requests: List[List[GetMultipleDatapointsRequestItem]]
+    ) -> List[GetAggregatesResponseModel]:
+        data: List[GetAggregatesResponseModel] = [
+            self.api.get_multi_datapoints(req) for req in requests
+        ]
+        return data
+
+    def _build_api_requests(
+        self,
+        end_time: datetime,
+        start_time: datetime,
+        timeseries: List[TimeseriesModel],
+    ) -> List[List[GetMultipleDatapointsRequestItem]]:
+        timeseries_api_request_limit: int = 100
+        request: List[GetMultipleDatapointsRequestItem] = [
+            {
+                "id": item["id"],
+                "startTime": start_time.isoformat(),
+                "endTime": end_time.isoformat(),
+                "statusFilter": [TIMESERIES_STATUS_GOOD],
+            }
+            for item in timeseries
+        ]
+
+        requests: List[List[GetMultipleDatapointsRequestItem]] = [request]
+        if self._data_request_must_be_split(timeseries, timeseries_api_request_limit):
+            requests = self._split_list(request, timeseries_api_request_limit)
+
+        return requests

@@ -1,12 +1,73 @@
+from datetime import datetime, timedelta
+from typing import Dict
 from unittest.mock import MagicMock, Mock
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from omnia_timeseries.api import MessageModel
+from omnia_timeseries.models import (
+    GetTimeseriesResponseModel,
+    TimeseriesModel,
+    AggregateModel,
+    GetAggregatesResponseModel,
+)
 
 from sara_timeseries.api import OmniaAPI
 from sara_timeseries.omnia_service import OmniaService
+
+facility: str = "asset"
+description: str = "CO2Measurement"
+robot_name: str = "robot"
+tag_id: str = "tag_id"
+inspection_description: str = "CO2-E100-N100"
+timestamp: str = "2025-08-28T12:31:33.7180000Z"
+example_id: str = "da6f5c45-16b9-429f-8b29-b53bf701dcb0"
+
+search_timeseries_inner_value: TimeseriesModel = {
+    "assetId": facility,
+    "changedTime": timestamp,
+    "createdTime": timestamp,
+    "description": description,
+    "externalId": "",
+    "facility": facility,
+    "id": example_id,
+    "metadata": {
+        "inspection_description": inspection_description,
+        "robot_name": robot_name,
+        "tag_id": tag_id,
+    },
+    "name": f"{facility}_100E_100N_100U_{tag_id}_{robot_name}_{inspection_description}",
+    "source": "FLOTILLA",
+    "step": True,
+    "unit": "% v/v",
+}
+
+datapoint: AggregateModel = {"time": timestamp, "value": 1, "status": 192}
+get_multi_datapoint_return_value: GetAggregatesResponseModel = {
+    "data": {
+        "items": [
+            {
+                "id": "test_id",
+                "datapoints": [datapoint, datapoint, datapoint, datapoint],
+            }
+        ]
+    },
+    "count": None,
+    "continuationToken": None,
+}
+
+search_timeseries_return_value: GetTimeseriesResponseModel = {
+    "data": {"items": [search_timeseries_inner_value, search_timeseries_inner_value]},
+    "count": None,
+    "continuationToken": None,
+}
+
+get_timeseries_by_id_return_value: GetTimeseriesResponseModel = {
+    "data": {"items": [search_timeseries_inner_value]},
+    "count": None,
+    "continuationToken": None,
+}
 
 
 @pytest.fixture
@@ -18,14 +79,24 @@ def mock_omnia_service() -> OmniaService:
             self.api = mock_api
 
     omnia_service = MockOmniaService()
-    mock_response = {"data": {"items": [{"id": "test_timeseries_id"}]}}
 
+    mock_response = {"data": {"items": [{"id": "test_timeseries_id"}]}}
     omnia_service.api.get_or_add_timeseries = Mock(return_value=mock_response)
 
     mock_response = MessageModel(
         statusCode=0, message="test_message", traceId="test_trace_id"
     )
     omnia_service.api.write_data = Mock(return_value=mock_response)
+
+    omnia_service.api.search_timeseries = Mock(
+        return_value=search_timeseries_return_value
+    )
+    omnia_service.api.get_timeseries_by_id = Mock(
+        return_value=get_timeseries_by_id_return_value
+    )
+    omnia_service.api.get_multi_datapoints = Mock(
+        return_value=get_multi_datapoint_return_value
+    )
 
     return omnia_service
 
@@ -143,3 +214,25 @@ def test_datapoint_endpoint_failure_add_datapoint(
     response = test_client.post("/datapoint", json=request_payload)
     assert response.status_code == 500
     assert response.json() == {"detail": "Failed to add datapoint to timeseries"}
+
+
+def test_get_datapoints_for_all_timeseries_matching_facility_and_description(
+    test_client: TestClient,
+    mock_omnia_service: OmniaService,
+) -> None:
+    payload: Dict = {
+        "facility": facility,
+        "start_time": (
+            datetime.fromisoformat(timestamp) - timedelta(weeks=1)
+        ).isoformat(),
+        "end_time": (
+            datetime.fromisoformat(timestamp) + timedelta(weeks=1)
+        ).isoformat(),
+    }
+
+    response = test_client.post("/get-co2-measurements", json=payload)
+    output: Dict = response.json()
+    assert response.status_code == 200
+    assert len(output["data"]) == len(
+        get_multi_datapoint_return_value["data"]["items"][0]["datapoints"]
+    )

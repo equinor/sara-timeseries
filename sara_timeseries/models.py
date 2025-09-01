@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Dict, List
 
 from pydantic import BaseModel
 
@@ -20,3 +21,13 @@ class ResponseModel(BaseModel):
     timeseriesId: str
     statusCode: int
     message: str
+
+
+class DatapointsRequestModel(BaseModel):
+    facility: str
+    start_time: datetime
+    end_time: datetime
+
+
+class DatapointsResponseModel(BaseModel):
+    data: List[Dict]
