@@ -34,8 +34,8 @@ class OmniaAPI:
                     step=data.step,
                     metadata=data.metadata,
                 )
-            except Exception as e:
-                logger.error(f"Failed to get or add timeseries: {e}")
+            except Exception:
+                logger.error("Failed to get or add timeseries")
                 raise HTTPException(
                     status_code=500, detail="Failed to get or add timeseries"
                 )
@@ -55,8 +55,8 @@ class OmniaAPI:
                     f"with ID: {timeseries_id}, name: {data.name}, facility: {data.facility}, description: "
                     f"{data.description}; and datapoint with value: {data.value}, timestamp: {data.timestamp}"
                 )
-            except Exception as e:
-                logger.error(f"Failed to add datapoint to timeseries: {e}")
+            except Exception:
+                logger.error("Failed to add datapoint to timeseries")
                 raise HTTPException(
                     status_code=500, detail="Failed to add datapoint to timeseries"
                 )
