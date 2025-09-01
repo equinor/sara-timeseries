@@ -78,7 +78,7 @@ class OmniaService:
             raise
 
     def add_datapoint_to_timeseries(
-        self, id: str, value: float, timestamp: datetime
+        self, timeseries_id: str, value: float, timestamp: datetime
     ) -> MessageModel:
         """
         Writes data to the timeseries with the given ID.
@@ -91,19 +91,19 @@ class OmniaService:
             status=TIMESERIES_STATUS_GOOD,
         )
         data = DatapointsPostRequestModel(datapoints=[datapoint])
-        return self.api.write_data(id, data)
+        return self.api.write_data(timeseries_id, data)
 
-    def cleanup_timeseries(self, id: str) -> None:
+    def cleanup_timeseries(self, timeseries_id: str) -> None:
         """
         Cleans up the timeseries with the given ID.
         Deletes the timeseries from the API.
         """
         # TODO: Remove when we use PROD environment
         try:
-            response = self.api.delete_timeseries_by_id(id)
-            logger.info(f"Successfully deleted timeseries {id}: {response}")
+            response = self.api.delete_timeseries_by_id(timeseries_id)
+            logger.info(f"Successfully deleted timeseries {timeseries_id}: {response}")
         except Exception as e:
-            logger.error(f"Error deleting timeseries {id}: {e}")
+            logger.error(f"Error deleting timeseries {timeseries_id}: {e}")
             raise
 
     def read_all_timeseries_by_description(

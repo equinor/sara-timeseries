@@ -44,7 +44,7 @@ def test_add_datapoint_to_timeseries(omnia_service: OmniaService) -> None:
     omnia_service.api.write_data = Mock(return_value=mock_response)
 
     result = omnia_service.add_datapoint_to_timeseries(
-        id="test_id",
+        timeseries_id="test_id",
         value=123.45,
         timestamp=datetime(2023, 1, 1, 12, 0, 0),
     )

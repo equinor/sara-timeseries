@@ -24,7 +24,7 @@ class OmniaAPI:
         @self.router.post("/datapoint")
         def forward_data(data: RequestModel) -> ResponseModel:
             try:
-                id: str = self.omnia_service.get_or_add_timeseries(
+                timeseries_id: str = self.omnia_service.get_or_add_timeseries(
                     name=data.name,
                     facility=data.facility,
                     external_id=data.externalId,
@@ -40,7 +40,7 @@ class OmniaAPI:
                     status_code=500, detail="Failed to get or add timeseries"
                 )
 
-            if not id:
+            if not timeseries_id:
                 logger.error("Failed to get or add timeseries: ID is None")
                 raise HTTPException(
                     status_code=500, detail="Failed to get or add timeseries"
@@ -48,13 +48,12 @@ class OmniaAPI:
 
             try:
                 response: MessageModel = self.omnia_service.add_datapoint_to_timeseries(
-                    id, data.value, data.timestamp
+                    timeseries_id, data.value, data.timestamp
                 )
                 logger.info(
-                    f"Successfully uploaded datapoint to timeseries"
-                    f" with response: {response};"
-                    f" and timeseries with ID: {id}, name: {data.name}, facility: {data.facility}, description: {data.description}; "
-                    f" and datapoint with value: {data.value}, timestamp: {data.timestamp}"
+                    f"Successfully uploaded datapoint to timeseries with response: {response}; and timeseries "
+                    f"with ID: {timeseries_id}, name: {data.name}, facility: {data.facility}, description: "
+                    f"{data.description}; and datapoint with value: {data.value}, timestamp: {data.timestamp}"
                 )
             except Exception as e:
                 logger.error(f"Failed to add datapoint to timeseries: {e}")
@@ -63,7 +62,7 @@ class OmniaAPI:
                 )
 
             return ResponseModel(
-                timeseriesId=id,
+                timeseriesId=timeseries_id,
                 statusCode=response["statusCode"],
                 message=response["message"],
             )
