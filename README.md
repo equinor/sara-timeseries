@@ -1,6 +1,7 @@
 # SARA Timeseries
 
-The **SARA Timeseries** provides an automated process to upload data to Omnia Timeseries API. For more information about **Omnia Timeseries API**, see [Omnia](https://github.com/equinor/OmniaPlant)
+The **SARA Timeseries** provides an automated process to upload data to Omnia Timeseries API. 
+For more information about **Omnia Timeseries API**, see [Omnia](https://github.com/equinor/OmniaPlant)
 
 ## Required Environment Variables
 
@@ -12,7 +13,9 @@ The **SARA Timeseries** provides an automated process to upload data to Omnia Ti
 
 ## Dependencies
 
-The dependencies used for this package are listed in `pyproject.toml` and pinned in `requirements.txt`. This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools)) for this:
+The dependencies used for this package are listed in `pyproject.toml` and pinned in `requirements.txt`. 
+This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools)) 
+for this:
 
 ```
 pip-compile --output-file=requirements.txt pyproject.toml

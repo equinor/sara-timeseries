@@ -19,7 +19,7 @@ PORT = int(os.environ.get("PORT", 8200))
 
 if not CLIENT_ID or not CLIENT_SECRET or not TENANT_ID:
     raise RuntimeError(
-        "TIMESERIES_CLIENT_ID, TIMESERIES_CLIENT_SECRET, TIMESERIES_TENANT_ID must be provided via environment variables."
+        "TIMESERIES_CLIENT_ID, TIMESERIES_CLIENT_SECRET, TIMESERIES_TENANT_ID must be provided as environment variables"
     )
 
 # Create FastAPI app and setup routes
