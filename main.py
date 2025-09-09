@@ -1,37 +1,48 @@
-import os
-
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from sara_timeseries.api import OmniaAPI
+from sara_timeseries.api import API
+from sara_timeseries.core.settings import settings
 from sara_timeseries.logger import setup_logger
-from sara_timeseries.omnia_service import OmniaService
+from sara_timeseries.modules.sara_timeseries_api.omnia_service import OmniaService
+from sara_timeseries.modules.sara_timeseries_api.timeseries_controller import (
+    TimeseriesController,
+)
+from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
+    TimeseriesService,
+)
 
 setup_logger()
 
 load_dotenv()
 
-CLIENT_ID = os.environ.get("TIMESERIES_CLIENT_ID")
-CLIENT_SECRET = os.environ.get("TIMESERIES_CLIENT_SECRET")
-TENANT_ID = os.environ.get("TIMESERIES_TENANT_ID")
-PORT = int(os.environ.get("PORT", 8200))
-
-if not CLIENT_ID or not CLIENT_SECRET or not TENANT_ID:
+if not settings.CLIENT_SECRET:
     raise RuntimeError(
-        "TIMESERIES_CLIENT_ID, TIMESERIES_CLIENT_SECRET, TIMESERIES_TENANT_ID must be provided as environment variables"
+        "SARA_TIMESERIES_CLIENT_SECRET must be provided as an environment variable"
     )
 
-# Create FastAPI app and setup routes
-app = FastAPI()
+# Services
 omnia_service = OmniaService(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
-    tenant_id=TENANT_ID,
+    client_id=settings.CLIENT_ID,
+    client_secret=settings.CLIENT_SECRET,
+    tenant_id=settings.TENANT_ID,
 )
-omnia_api = OmniaAPI(omnia_service=omnia_service)
-omnia_api.include_in_app(app)
+timeseries_service: TimeseriesService = TimeseriesService(omnia_service=omnia_service)
+
+# Controllers & API
+timeseries_controller: TimeseriesController = TimeseriesController(
+    timeseries_service=timeseries_service
+)
+api: API = API(timeseries_controller=timeseries_controller)
+
+app: FastAPI = api.create_app()
 
 if __name__ == "__main__":
     # Forcing uvicorn to run on 0.0.0.0
-    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)
+    uvicorn.run(
+        "main:app",
+        host=settings.FAST_API_HOST,
+        port=settings.FAST_API_PORT,
+        reload=True,
+    )
