@@ -28,6 +28,7 @@ dependencies = [
   "azure-identity",
   "azure-keyvault-secrets",
   "pydantic",
+  "pydantic-settings",
   "loguru",
   "python-dotenv",
   "fastapi",

@@ -91,7 +91,13 @@ class OmniaService:
             status=TIMESERIES_STATUS_GOOD,
         )
         data = DatapointsPostRequestModel(datapoints=[datapoint])
-        return self.api.write_data(timeseries_id, data)
+
+        try:
+            x = self.api.write_data(timeseries_id, data)
+            return x
+        except Exception as e:
+            logger.error(f"Error writing to timeseries: {e}")
+            raise e
 
     def cleanup_timeseries(self, timeseries_id: str) -> None:
         """

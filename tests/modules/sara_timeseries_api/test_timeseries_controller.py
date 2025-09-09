@@ -13,8 +13,14 @@ from omnia_timeseries.models import (
     GetAggregatesResponseModel,
 )
 
-from sara_timeseries.api import OmniaAPI
-from sara_timeseries.omnia_service import OmniaService
+from sara_timeseries.api import API
+from sara_timeseries.modules.sara_timeseries_api.omnia_service import OmniaService
+from sara_timeseries.modules.sara_timeseries_api.timeseries_controller import (
+    TimeseriesController,
+)
+from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
+    TimeseriesService,
+)
 
 facility: str = "asset"
 description: str = "CO2Measurement"
@@ -103,9 +109,12 @@ def mock_omnia_service() -> OmniaService:
 
 @pytest.fixture
 def test_client(mock_omnia_service: OmniaService) -> TestClient:
-    app = FastAPI()
-    omnia_api = OmniaAPI(mock_omnia_service)
-    omnia_api.include_in_app(app)
+    timeseries_service: TimeseriesService = TimeseriesService(
+        omnia_service=mock_omnia_service
+    )
+    timeseries_controller = TimeseriesController(timeseries_service=timeseries_service)
+    api: API = API(timeseries_controller=timeseries_controller)
+    app: FastAPI = api.create_app()
     return TestClient(app)
 
 
@@ -123,7 +132,7 @@ def test_datapoint_endpoint_success(test_client: TestClient) -> None:
         "timestamp": "2023-01-01T00:00:00Z",
     }
 
-    response = test_client.post("/datapoint", json=request_payload)
+    response = test_client.post("/timeseries/datapoint", json=request_payload)
     assert response.status_code == 200
     omnia_response = MessageModel(
         statusCode=0, message="test_message", traceId="test_trace_id"
@@ -149,7 +158,7 @@ def test_datapoint_endpoint_invalid_timestamp(test_client: TestClient) -> None:
         "timestamp": "20230101T00:00:00Z",
     }
 
-    response = test_client.post("/datapoint", json=request_payload)
+    response = test_client.post("/timeseries/datapoint", json=request_payload)
     assert response.status_code == 422
     assert response.json() == {
         "detail": [
@@ -189,9 +198,9 @@ def test_datapoint_endpoint_failure_get_or_add_timeseries(
         "timestamp": "2023-01-01T00:00:00Z",
     }
 
-    response = test_client.post("/datapoint", json=request_payload)
+    response = test_client.post("/timeseries/datapoint", json=request_payload)
     assert response.status_code == 500
-    assert response.json() == {"detail": "Failed to get or add timeseries"}
+    assert response.json() == {"detail": "Failed to ingest data"}
 
 
 def test_datapoint_endpoint_failure_add_datapoint(
@@ -211,9 +220,9 @@ def test_datapoint_endpoint_failure_add_datapoint(
         "timestamp": "2023-01-01T00:00:00Z",
     }
 
-    response = test_client.post("/datapoint", json=request_payload)
+    response = test_client.post("/timeseries/datapoint", json=request_payload)
     assert response.status_code == 500
-    assert response.json() == {"detail": "Failed to add datapoint to timeseries"}
+    assert response.json() == {"detail": "Failed to ingest data"}
 
 
 def test_get_datapoints_for_all_timeseries_matching_facility_and_description(
@@ -230,7 +239,7 @@ def test_get_datapoints_for_all_timeseries_matching_facility_and_description(
         ).isoformat(),
     }
 
-    response = test_client.post("/get-co2-measurements", json=payload)
+    response = test_client.post("/timeseries/get-co2-measurements", json=payload)
     output: Dict = response.json()
     assert response.status_code == 200
     assert len(output["data"]) == len(
