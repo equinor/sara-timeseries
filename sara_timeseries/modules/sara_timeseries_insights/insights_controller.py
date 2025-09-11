@@ -1,16 +1,14 @@
 from http import HTTPStatus
 from typing import Dict, List
-import logging
 
 from fastapi import APIRouter, Body, HTTPException
+from loguru import logger
 from pandas import DataFrame
 
 from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
     InsightsService,
 )
 from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
-
-logger = logging.getLogger(__name__)
 
 
 class InsightsController:
@@ -38,7 +36,7 @@ class InsightsController:
         except Exception:
             logger.exception("Failed to retrieve consolidated CO2 measurements")
             raise HTTPException(
-                status_code=500,
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail="Failed to retrieve consolidated CO2 measurements",
             )
 
