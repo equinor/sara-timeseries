@@ -30,7 +30,7 @@ def insights_service() -> InsightsService:
 
 
 def test_consolidate_co2_measurements(insights_service: InsightsService) -> None:
-    co2_measurements_test_data: List[Dict] = _read_co2_test_data()
+    co2_measurements_test_data: Dict = _read_co2_test_data()
     insights_service.timeseries_service.get_co2_measurements.return_value = (  # type: ignore
         DatapointsResponseModel(data=co2_measurements_test_data)
     )
