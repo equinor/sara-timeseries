@@ -34,9 +34,9 @@ ENV PATH="/app/venv/bin:$PATH"
 EXPOSE 8200
 
 # Add non-root user
-RUN useradd --create-home --shell /bin/bash 1000
-RUN chown -R 1000 /app
+RUN useradd --create-home --shell /bin/bash --uid 1000 appuser
+RUN chown -R appuser:appuser /app
 RUN chmod 755 /app
-USER 1000
+USER appuser
 
 CMD ["python", "main.py"]
