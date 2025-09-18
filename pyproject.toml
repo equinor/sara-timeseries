@@ -33,6 +33,7 @@ dependencies = [
   "python-dotenv",
   "fastapi",
   "uvicorn",
+  "pandas",
   "omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main",
 ]
 dynamic = ["version"]
@@ -41,7 +42,7 @@ dynamic = ["version"]
 repository = "https://github.com/equinor/sara-timeseries.git"
 
 [project.optional-dependencies]
-dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff"]
+dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
