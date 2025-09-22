@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Body, HTTPException
+from loguru import logger
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
     CO2ConcentrationRequestModel,
@@ -27,6 +28,10 @@ class TimeseriesController:
             description="Data to be forwarded",
         ),
     ) -> ResponseModel:
+        logger.info(
+            f"Received request to ingest datapoint with name {data.name} to facility {data.facility} "
+            f"with timestamp {data.timestamp.isoformat()}"
+        )
         try:
             return self.timeseries_service.ingest_datapoint(datapoint=data)
         except Exception:
@@ -41,6 +46,10 @@ class TimeseriesController:
             description="Retrieve all CO2 measurements for the given facility and time window",
         ),
     ) -> DatapointsResponseModel:
+        logger.info(
+            f"Received request to retrieve CO2 measurements for facility {request.facility} and time window "
+            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",
+        )
         try:
             return self.timeseries_service.get_co2_measurements(request)
         except Exception:
