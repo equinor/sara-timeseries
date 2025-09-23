@@ -12,6 +12,12 @@ from sara_timeseries.modules.sara_timeseries_api.timeseries_controller import (
 from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
     TimeseriesService,
 )
+from sara_timeseries.modules.sara_timeseries_insights.insights_controller import (
+    InsightsController,
+)
+from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
+    InsightsService,
+)
 
 setup_logger()
 
@@ -29,12 +35,19 @@ omnia_service = OmniaService(
     tenant_id=settings.TENANT_ID,
 )
 timeseries_service: TimeseriesService = TimeseriesService(omnia_service=omnia_service)
-
+insights_service: InsightsService = InsightsService(
+    timeseries_service=timeseries_service
+)
 # Controllers & API
 timeseries_controller: TimeseriesController = TimeseriesController(
     timeseries_service=timeseries_service
 )
-api: API = API(timeseries_controller=timeseries_controller)
+insights_controller: InsightsController = InsightsController(
+    insights_service=insights_service
+)
+api: API = API(
+    timeseries_controller=timeseries_controller, insights_controller=insights_controller
+)
 
 app: FastAPI = api.create_app()
 
