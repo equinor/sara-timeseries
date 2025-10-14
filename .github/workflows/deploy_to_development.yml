@@ -21,6 +21,19 @@ jobs:
           SHA_SHORT=$(echo ${{ github.sha }} | cut -c1-8)
           echo "tag=$SHA_SHORT" >> "$GITHUB_OUTPUT"
 
+  build-and-push-dev-to-ghcr:
+    name: Update containers in ghcr
+    needs: trigger-github-deployment
+    uses: ./.github/workflows/publish_component.yml
+    with:
+      Registry: ghcr.io
+      ImageName: ${{ github.repository }}
+      Tag: ${{ github.event.release.tag_name }}
+      SecondaryTag: dev
+    secrets:
+      RegistryUsername: ${{ github.actor }}
+      RegistryPassword: ${{ secrets.GITHUB_TOKEN }}
+
   build-and-push-components:
     name: Build and push containers to acr for Development
     needs: [get-short-sha]
