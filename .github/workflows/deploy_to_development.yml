@@ -29,6 +29,7 @@ jobs:
       Registry: auroradevacr.azurecr.io
       ImageName: robotics/sara-timeseries
       Tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
+      SecondaryTag: "dev"
     secrets:
       RegistryUsername: ${{ secrets.ROBOTICS_AURORADEVACR_USERNAME }}
       RegistryPassword: ${{ secrets.ROBOTICS_AURORADEVACR_PASSWORD }}

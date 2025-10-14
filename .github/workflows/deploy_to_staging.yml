@@ -28,6 +28,7 @@ jobs:
       Registry: auroraprodacr.azurecr.io
       ImageName: robotics/sara-timeseries
       Tag: ${{ github.event.release.tag_name }}
+      SecondaryTag: "latest"
     secrets:
       RegistryUsername: ${{ secrets.ROBOTICS_AURORAPRODACR_USERNAME }}
       RegistryPassword: ${{ secrets.ROBOTICS_AURORAPRODACR_PASSWORD }}
