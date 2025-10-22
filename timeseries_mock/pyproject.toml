@@ -1,0 +1,17 @@
+[project]
+name = "workflow_notifier"
+authors = [{ name = "Equinor ASA", email = "fg_robots_dev@equinor.com" }]
+description = "Workflow Notifier"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { file = "LICENSE" }
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = ["Flask", "Werkzeug", "requests", "loguru"]
+dynamic = ["version"]

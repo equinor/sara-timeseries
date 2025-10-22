@@ -1,5 +1,6 @@
+import os
+
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from sara_timeseries.api import API
@@ -21,12 +22,12 @@ from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
 
 setup_logger()
 
-load_dotenv()
-
 if not settings.CLIENT_SECRET:
     raise RuntimeError(
         "SARA_TIMESERIES_CLIENT_SECRET must be provided as an environment variable"
     )
+
+USE_MOCK = os.getenv("USE_MOCK_TIMESERIES_API", "false").lower() == "true"
 
 # Services
 omnia_service = OmniaService(
@@ -34,6 +35,12 @@ omnia_service = OmniaService(
     client_secret=settings.CLIENT_SECRET,
     tenant_id=settings.TENANT_ID,
 )
+
+if USE_MOCK:
+    import timeseries_mock.http_timeseries_api as mock_api
+
+    omnia_service.api = mock_api.HttpTimeseriesAPI(base_url="http://127.0.0.1:5001")
+
 timeseries_service: TimeseriesService = TimeseriesService(omnia_service=omnia_service)
 insights_service: InsightsService = InsightsService(
     timeseries_service=timeseries_service

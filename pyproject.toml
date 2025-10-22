@@ -8,7 +8,7 @@ authors = [{ name = "Equinor ASA", email = "fg_robots_dev@equinor.com" }]
 description = "Component for uploading datapoints to Omnia Timeseries"
 readme = "README.md"
 requires-python = ">=3.12"
-license-files = ["LICENSE"]
+license = {file = "LICENSE"}
 classifiers = [
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
@@ -42,7 +42,7 @@ dynamic = ["version"]
 repository = "https://github.com/equinor/sara-timeseries.git"
 
 [project.optional-dependencies]
-dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock"]
+dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock", "types-requests"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
@@ -56,6 +56,12 @@ strict_optional = true
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+
+[tool.setuptools]
+packages = ["sara_timeseries"]
+
+[tool.setuptools_scm]
+# This enables setuptools_scm to automatically determine version from git tags
 
 [tool.black]
 line_length = 88
