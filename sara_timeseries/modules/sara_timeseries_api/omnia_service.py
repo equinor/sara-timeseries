@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict
+from typing import Dict, List
 
 from azure.identity import ClientSecretCredential
 from loguru import logger
@@ -13,9 +13,9 @@ from omnia_timeseries.api import (
     TimeseriesRequestItem,
 )
 from omnia_timeseries.models import (
-    GetMultipleDatapointsRequestItem,
-    GetAggregatesResponseModel,
     AggregateItemModel,
+    GetAggregatesResponseModel,
+    GetMultipleDatapointsRequestItem,
     TimeseriesModel,
 )
 
