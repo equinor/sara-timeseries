@@ -1,18 +1,18 @@
 # SARA Timeseries
 
-The **SARA Timeseries** provides an automated process to upload data to Omnia Timeseries API. 
+The **SARA Timeseries** provides an automated process to upload data to Omnia Timeseries API.
 For more information about **Omnia Timeseries API**, see [Omnia](https://github.com/equinor/OmniaPlant)
 
 ## Required Environment Variables
 
 | Env var                       | Description                    |
-|-------------------------------| ------------------------------ |
+| ----------------------------- | ------------------------------ |
 | SARA_TIMESERIES_CLIENT_SECRET | Omnia Timeseries Client Secret |
 
 ## Dependencies
 
-The dependencies used for this package are listed in `pyproject.toml` and pinned in `requirements.txt`. 
-This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools)) 
+The dependencies used for this package are listed in `pyproject.toml` and pinned in `requirements.txt`.
+This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools))
 for this:
 
 ```
@@ -27,7 +27,13 @@ pip-compile --output-file=requirements.txt pyproject.toml --upgrade
 
 ### Fast API App
 
-App is running default at `localhost:8000/docs`
+App is running default at `localhost:8200/docs`
+
+The app can be run locally through this command
+
+```bash
+python main.py
+```
 
 ### Build the Docker image
 
@@ -43,4 +49,6 @@ export SARA_TIMESERIES_CLIENT_SECRET="<client-secret-to-timeseries-api>"
 
 ### Run the Docker image
 
+```bash
 docker run --env-file ./.env sara-timeseries
+```
