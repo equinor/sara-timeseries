@@ -26,11 +26,11 @@ markupsafe==3.0.3
     # via
     #   jinja2
     #   werkzeug
-requests==2.32.3
+requests==2.32.4
     # via workflow_notifier (pyproject.toml)
 urllib3==2.5.0
     # via requests
-werkzeug==3.0.3
+werkzeug==3.0.6
     # via
     #   flask
     #   workflow_notifier (pyproject.toml)
