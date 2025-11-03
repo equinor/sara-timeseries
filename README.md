@@ -49,7 +49,7 @@ export SARA_TIMESERIES_CLIENT_SECRET="<client-secret-to-timeseries-api>"
 ### Run the Docker image
 
 ```bash
-docker run --env-file ./.env sara-timeseries
+docker run -p 8200:8200 --env-file ./.env sara-timeseries
 ```
 
 ### Running with Omnia Timeseries mock
