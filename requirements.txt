@@ -57,7 +57,7 @@ distlib==0.4.0
     # via virtualenv
 dulwich==0.21.7
     # via poetry
-fastapi==0.120.0
+fastapi==0.121.0
     # via sara-timeseries (pyproject.toml)
 fastjsonschema==2.21.2
     # via poetry
@@ -194,8 +194,10 @@ six==1.17.0
     # via python-dateutil
 sniffio==1.3.1
     # via anyio
-starlette==0.48.0
-    # via fastapi
+starlette==0.49.3
+    # via
+    #   fastapi
+    #   sara-timeseries (pyproject.toml)
 tomlkit==0.13.3
     # via poetry
 trove-classifiers==2025.9.11.17
@@ -206,7 +208,6 @@ typing-extensions==4.15.0
     #   azure-identity
     #   azure-keyvault-secrets
     #   fastapi
-    #   opentelemetry-api
     #   pydantic
     #   pydantic-core
     #   typing-inspection
