@@ -31,9 +31,10 @@ dependencies = [
   "pydantic-settings",
   "loguru",
   "python-dotenv",
-  "fastapi",
+  "fastapi>=0.121.0",
   "uvicorn",
   "pandas",
+  "starlette>=0.49.1",
   "omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main",
 ]
 dynamic = ["version"]
