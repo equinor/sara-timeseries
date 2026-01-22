@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Dict, List
+import logging
 
 from azure.identity import ClientSecretCredential
-from loguru import logger
 from omnia_timeseries.api import (
     DatapointModel,
     DatapointsPostRequestModel,
@@ -12,12 +12,15 @@ from omnia_timeseries.api import (
     TimeseriesEnvironment,
     TimeseriesRequestItem,
 )
+
 from omnia_timeseries.models import (
     AggregateItemModel,
     GetAggregatesResponseModel,
     GetMultipleDatapointsRequestItem,
     TimeseriesModel,
 )
+
+logger = logging.getLogger(__name__)
 
 TIMESERIES_STATUS_GOOD = 192
 
