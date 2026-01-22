@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     TENANT_ID: str = Field(default="3aa4a235-b6e2-48d5-9195-7fcf05b459b0")
     CLIENT_SECRET: Optional[str] = Field(default=None)
 
+    # OpenTelemetry
+    OTEL_SERVICE_NAME: str = Field(default="sara-timeseries")
+    OTEL_EXPORTER_OTLP_ENDPOINT: str = Field(default="http://localhost:4317")
+    OTEL_EXPORTER_OTLP_PROTOCOL: str = Field(default="grpc")
+
     model_config = SettingsConfigDict(
         env_prefix="SARA_TIMESERIES_",
         env_file=".env",

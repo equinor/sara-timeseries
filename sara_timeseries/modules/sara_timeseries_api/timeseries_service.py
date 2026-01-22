@@ -1,6 +1,6 @@
 from typing import List, Dict
+import logging
 
-from loguru import logger
 from omnia_timeseries.models import TimeseriesModel, MessageModel
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
@@ -10,6 +10,8 @@ from sara_timeseries.modules.sara_timeseries_api.models import (
     ResponseModel,
 )
 from sara_timeseries.modules.sara_timeseries_api.omnia_service import OmniaService
+
+logger = logging.getLogger(__name__)
 
 
 class TimeseriesService:
