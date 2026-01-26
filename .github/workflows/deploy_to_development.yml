@@ -27,7 +27,6 @@ jobs:
 
   build-and-push-dev-to-ghcr:
     name: Update containers in ghcr
-    needs: trigger-github-deployment
     uses: ./.github/workflows/publish_component.yml
     with:
       Registry: ghcr.io
