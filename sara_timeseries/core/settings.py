@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     # Fast API configuration
     FAST_API_HOST: str = Field(default="0.0.0.0")
     FAST_API_PORT: int = Field(default=8200)
+    RELOAD: bool = Field(default=False)
 
     # Service principle authentication
     CLIENT_ID: str = Field(default="38ab1ef9-d7ea-4e2b-ae4c-466ca70a1093")
