@@ -7,5 +7,5 @@ if __name__ == "__main__":
         "sara_timeseries.app:app",
         host=settings.FAST_API_HOST,
         port=settings.FAST_API_PORT,
-        reload=True,
+        reload=settings.RELOAD,
     )
