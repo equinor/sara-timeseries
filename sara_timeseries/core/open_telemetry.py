@@ -80,7 +80,10 @@ def setup_open_telemetry(app: Optional[FastAPI] = None) -> None:
     )
 
     # --- Auto Instrumentation ---
-    RequestsInstrumentor().instrument()
+    requests_instrumentor = RequestsInstrumentor()
+    if not requests_instrumentor.is_instrumented_by_opentelemetry:
+        requests_instrumentor.instrument()
+
     if app:
         FastAPIInstrumentor.instrument_app(app)
     else:

@@ -1,4 +1,7 @@
 import os
+import logging
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
 
 from fastapi import FastAPI
 
@@ -21,6 +24,7 @@ from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
 )
 
 setup_logger()
+logger = logging.getLogger(__name__)
 
 if not settings.CLIENT_SECRET:
     raise RuntimeError(
@@ -56,5 +60,12 @@ api: API = API(
     timeseries_controller=timeseries_controller, insights_controller=insights_controller
 )
 
-app: FastAPI = api.create_app()
-setup_open_telemetry(app)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    setup_open_telemetry(app)
+    logger.info("OpenTelemetry setup complete.")
+    yield
+
+
+app: FastAPI = api.create_app(lifespan=lifespan)
