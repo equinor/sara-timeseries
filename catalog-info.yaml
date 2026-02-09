@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sara-timeseries
+  description: The SARA Anonymizer provides an automated process to upload data to the Omnia Timeseries API. 
+  annotations:
+    github.com/project-slug: equinor/sara-timeseries
+    github.com/team-slug: equinor/eq-robot-developer
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/eq-robot-developer
+  system: system:default/flotilla
