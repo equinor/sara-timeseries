@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Body, HTTPException
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
+    CO2ConcentrationRequestModel,
     RequestModel,
     ResponseModel,
     DatapointsRequestModel,
@@ -47,6 +48,22 @@ class TimeseriesController:
                 status_code=500, detail="Failed to retrieve CO2 measurements"
             )
 
+    def get_co2_concentration(
+        self,
+        request: CO2ConcentrationRequestModel = Body(
+            default=None,
+            embed=False,
+            title="SARA Timeseries Co2 Concentration",
+            description="Retrieve CO2 concentration for a single task",
+        ),
+    ) -> float:
+        try:
+            return self.timeseries_service.get_co2_concentration(request)
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Failed to retrieve CO2 concentration"
+            )
+
     def create_timeseries_router(self) -> APIRouter:
         router: APIRouter = APIRouter(tags=["timeseries"])
 
@@ -74,6 +91,22 @@ class TimeseriesController:
             responses={
                 HTTPStatus.OK.value: {
                     "description": "Successfully retrieved datapoints from Timeseries API",
+                    "model": DatapointsResponseModel,
+                },
+                HTTPStatus.INTERNAL_SERVER_ERROR.value: {
+                    "description": "API request failed du to an internal server error"
+                },
+            },
+        )
+
+        router.add_api_route(
+            path="/timeseries/get-co2-concentration",
+            endpoint=self.get_co2_concentration,
+            methods=["POST"],
+            summary="Retrieve CO2 concentration for a single task using inspection name, task time range and facility",
+            responses={
+                HTTPStatus.OK.value: {
+                    "description": "Successfully retrieved CO2 concentration from Timeseries API",
                     "model": DatapointsResponseModel,
                 },
                 HTTPStatus.INTERNAL_SERVER_ERROR.value: {

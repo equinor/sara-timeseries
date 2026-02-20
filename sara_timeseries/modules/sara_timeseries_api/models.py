@@ -29,5 +29,12 @@ class DatapointsRequestModel(BaseModel):
     end_time: datetime
 
 
+class CO2ConcentrationRequestModel(BaseModel):
+    facility: str
+    task_start_time: datetime
+    task_end_time: datetime
+    inspection_name: str
+
+
 class DatapointsResponseModel(BaseModel):
     data: List[Dict]
