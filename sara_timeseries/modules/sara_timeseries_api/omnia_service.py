@@ -139,6 +139,17 @@ class OmniaService:
             facility=facility, timeseries=timeseries
         )
 
+    def read_timeseries_by_description_and_facility_and_name(
+        self, description: str, facility: str, name: str
+    ) -> List[TimeseriesModel]:
+        """
+        Reads all timeseries from the API which match the given description, facility, and name.
+        """
+        timeseries: GetTimeseriesResponseModel = self.api.search_timeseries(
+            description=description, facility=facility, name=name
+        )
+        return timeseries["data"]["items"]
+
     def read_data_from_multiple_timeseries(
         self,
         timeseries: List[TimeseriesModel],

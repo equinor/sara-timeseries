@@ -4,6 +4,7 @@ import logging
 from omnia_timeseries.models import TimeseriesModel, MessageModel
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
+    CO2ConcentrationRequestModel,
     DatapointsRequestModel,
     DatapointsResponseModel,
     RequestModel,
@@ -87,3 +88,45 @@ class TimeseriesService:
         except Exception:
             logger.error("Failed to retrieve data from CO2 measurement timeseries")
             raise
+
+    def get_co2_concentration(self, request: CO2ConcentrationRequestModel) -> float:
+        co2_measurements_description: str = "CO2Measurement"
+        try:
+            timeseries: List[TimeseriesModel] = (
+                self.omnia_service.read_timeseries_by_description_and_facility_and_name(
+                    description=co2_measurements_description,
+                    facility=request.facility,
+                    name=request.inspection_name,
+                )
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to retrieve timeseries for description {co2_measurements_description}, "
+                f"facility {request.facility} and name {request.inspection_name}"
+            )
+            raise e
+
+        try:
+            data: List[Dict] = self.omnia_service.read_data_from_multiple_timeseries(
+                timeseries=timeseries,
+                start_time=request.task_start_time,
+                end_time=request.task_end_time,
+            )
+            if len(data) == 1:
+                return data[0]["value"]
+            elif len(data) == 0:
+                logger.warning(
+                    f"No data found for CO2 measurement with description {co2_measurements_description}, "
+                    f"facility {request.facility}, and name {request.inspection_name}"
+                )
+                raise
+            else:
+                logger.warning(
+                    f"Multiple datapoints found for CO2 measurement with description {co2_measurements_description}, "
+                    f"facility {request.facility}, and name {request.inspection_name}."
+                )
+                raise
+
+        except Exception as e:
+            logger.error("Failed to retrieve data from CO2 measurement timeseries")
+            raise e
