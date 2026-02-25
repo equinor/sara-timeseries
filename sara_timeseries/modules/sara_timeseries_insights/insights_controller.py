@@ -32,6 +32,7 @@ class InsightsController:
             data: DataFrame = self.insights_service.consolidate_co2_measurements(
                 request=request
             )
+            data = data[data["robot_name"] != "NLSBot"]  # TODO: Remove
             return data.to_dict("records")
         except Exception:
             logger.exception("Failed to retrieve consolidated CO2 measurements")
