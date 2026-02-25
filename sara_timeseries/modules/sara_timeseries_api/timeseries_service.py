@@ -1,5 +1,9 @@
+from http import HTTPStatus
+
 from typing import List, Dict
 import logging
+
+from fastapi import HTTPException
 
 from omnia_timeseries.models import TimeseriesModel, MessageModel
 
@@ -99,6 +103,15 @@ class TimeseriesService:
                     name=request.inspection_name,
                 )
             )
+            if len(timeseries) == 0:
+                logger.warning(
+                    f"No timeseries found for description {co2_measurements_description}, "
+                    f"facility {request.facility} and name {request.inspection_name}"
+                )
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail="No CO2 concentration timeseries found for the given inspection name and facility",
+                )
         except Exception as e:
             logger.error(
                 f"Failed to retrieve timeseries for description {co2_measurements_description}, "
@@ -119,13 +132,19 @@ class TimeseriesService:
                     f"No data found for CO2 measurement with description {co2_measurements_description}, "
                     f"facility {request.facility}, and name {request.inspection_name}"
                 )
-                raise
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail="No CO2 concentration found",
+                )
             else:
                 logger.warning(
                     f"Multiple datapoints found for CO2 measurement with description {co2_measurements_description}, "
                     f"facility {request.facility}, and name {request.inspection_name}."
                 )
-                raise
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    detail="Multiple CO2 concentrations found",
+                )
 
         except Exception as e:
             logger.error("Failed to retrieve data from CO2 measurement timeseries")
