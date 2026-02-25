@@ -30,7 +30,7 @@ def insights_service() -> InsightsService:
 
 
 def test_consolidate_co2_measurements(insights_service: InsightsService) -> None:
-    co2_measurements_test_data: Dict = _read_co2_test_data()
+    co2_measurements_test_data: List[Dict] = _read_co2_test_data()
     insights_service.timeseries_service.get_co2_measurements.return_value = (  # type: ignore
         DatapointsResponseModel(data=co2_measurements_test_data)
     )
@@ -42,7 +42,7 @@ def test_consolidate_co2_measurements(insights_service: InsightsService) -> None
     )
     df: DataFrame = insights_service.consolidate_co2_measurements(request=request)
 
-    assert df.shape[0] == 2
+    assert df.shape[0] == 1
     assert math.isclose(df.loc[0, "value_mean"], 1.2999, abs_tol=0.01)
     assert math.isclose(df.loc[0, "value_median"], 0.72, abs_tol=0.01)
     assert math.isclose(df.loc[0, "value_max"], 3.5481, abs_tol=0.01)

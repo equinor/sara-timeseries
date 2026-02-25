@@ -23,13 +23,13 @@ def _mean_top_percentile(x: Series, frac: float = 0.10) -> float:
 
 def _compute_indicators(measurements: DataFrame) -> DataFrame:
     df: DataFrame = (
-        measurements.groupby("name")
+        measurements.groupby("inspection_description")
         .agg(
             time_min=("time", "min"),
             time_max=("time", "max"),
             description=("description", "first"),
             externalId=("externalId", "first"),
-            inspection_description=("inspection_description", "first"),
+            name=("name", "first"),
             id=("id", "first"),
             facility=("facility", "first"),
             robot_name=("robot_name", "first"),
