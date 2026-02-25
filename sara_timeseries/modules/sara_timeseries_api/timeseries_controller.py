@@ -59,6 +59,8 @@ class TimeseriesController:
     ) -> float:
         try:
             return self.timeseries_service.get_co2_concentration(request)
+        except HTTPException as e:
+            raise e
         except Exception:
             raise HTTPException(
                 status_code=500, detail="Failed to retrieve CO2 concentration"
@@ -94,7 +96,7 @@ class TimeseriesController:
                     "model": DatapointsResponseModel,
                 },
                 HTTPStatus.INTERNAL_SERVER_ERROR.value: {
-                    "description": "API request failed du to an internal server error"
+                    "description": "API request failed due to an internal server error"
                 },
             },
         )
@@ -107,10 +109,16 @@ class TimeseriesController:
             responses={
                 HTTPStatus.OK.value: {
                     "description": "Successfully retrieved CO2 concentration from Timeseries API",
-                    "model": DatapointsResponseModel,
+                    "model": float,
                 },
                 HTTPStatus.INTERNAL_SERVER_ERROR.value: {
-                    "description": "API request failed du to an internal server error"
+                    "description": "API request failed due to an internal server error"
+                },
+                HTTPStatus.NOT_FOUND.value: {
+                    "description": "No CO2 concentration found for the given inspection name, task time range and facility"
+                },
+                HTTPStatus.BAD_REQUEST.value: {
+                    "description": "Multiple CO2 concentrations found for the given inspection name, task time range and facility"
                 },
             },
         )
