@@ -30,6 +30,7 @@ dependencies = [
   "pydantic",
   "pydantic-settings",
   "python-dotenv",
+  "fastapi-azure-auth",
   "fastapi>=0.121.0",
   "uvicorn",
   "pandas",
