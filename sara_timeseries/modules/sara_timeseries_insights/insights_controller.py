@@ -10,8 +10,8 @@ from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
 )
 from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
 
-
 logger = logging.getLogger(__name__)
+
 
 class InsightsController:
     def __init__(self, insights_service: InsightsService) -> None:

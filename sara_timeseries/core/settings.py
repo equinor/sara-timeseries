@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-
     # Fast API configuration
     FAST_API_HOST: str = Field(default="0.0.0.0")
     FAST_API_PORT: int = Field(default=8200)

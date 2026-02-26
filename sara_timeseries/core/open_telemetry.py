@@ -93,5 +93,5 @@ def setup_open_telemetry(app: Optional[FastAPI] = None) -> None:
     else:
         # Fallback if app not provided, though precise instrumentation is preferred
         FastAPIInstrumentor().instrument()
-    
+
     logger.info("OpenTelemetry setup complete.")

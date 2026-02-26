@@ -27,9 +27,7 @@ setup_logger()
 logger = logging.getLogger(__name__)
 
 if not settings.CLIENT_SECRET:
-    raise RuntimeError(
-        "CLIENT_SECRET must be provided as an environment variable"
-    )
+    raise RuntimeError("CLIENT_SECRET must be provided as an environment variable")
 
 USE_MOCK = os.getenv("USE_MOCK_TIMESERIES_API", "false").lower() == "true"
 
