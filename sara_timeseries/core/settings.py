@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     OTEL_EXPORTER_OTLP_ENDPOINT: str = Field(default="http://localhost:4317")
     OTEL_EXPORTER_OTLP_PROTOCOL: str = Field(default="grpc")
 
+    # Application settings
+    LIB_LOG_LEVEL: str = Field(
+        default="INFO"
+    )  # This does not affect the log level of uvicorn, just our own log statements and libraries that we use.
+
     model_config = SettingsConfigDict(
         env_prefix="",
         env_file=".env",
