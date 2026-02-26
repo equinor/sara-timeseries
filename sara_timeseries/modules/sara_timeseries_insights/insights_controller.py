@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Dict, List
 
 from fastapi import APIRouter, Body, HTTPException
-from loguru import logger
+import logging
 from pandas import DataFrame
 
 from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
@@ -10,6 +10,8 @@ from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
 )
 from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
 
+
+logger = logging.getLogger(__name__)
 
 class InsightsController:
     def __init__(self, insights_service: InsightsService) -> None:

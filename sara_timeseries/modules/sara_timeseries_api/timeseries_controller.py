@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Body, HTTPException
-from loguru import logger
+import logging
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
     CO2ConcentrationRequestModel,
@@ -14,6 +14,8 @@ from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
     TimeseriesService,
 )
 
+
+logger = logging.getLogger(__name__)
 
 class TimeseriesController:
     def __init__(self, timeseries_service: TimeseriesService) -> None:

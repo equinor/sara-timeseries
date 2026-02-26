@@ -13,5 +13,5 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["Flask", "Werkzeug", "requests", "loguru"]
+dependencies = ["Flask", "Werkzeug", "requests"]
 dynamic = ["version"]

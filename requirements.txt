@@ -55,8 +55,6 @@ importlib-metadata==8.7.1
     # via opentelemetry-api
 isodate==0.7.2
     # via azure-keyvault-secrets
-loguru==0.7.3
-    # via sara-timeseries (pyproject.toml)
 msal==1.35.0
     # via
     #   azure-identity
