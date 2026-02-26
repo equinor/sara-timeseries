@@ -29,7 +29,6 @@ dependencies = [
   "azure-keyvault-secrets",
   "pydantic",
   "pydantic-settings",
-  "loguru",
   "python-dotenv",
   "fastapi>=0.121.0",
   "uvicorn",
