@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     OTEL_EXPORTER_OTLP_PROTOCOL: str = Field(default="grpc")
 
     model_config = SettingsConfigDict(
-        env_prefix="SARA_TIMESERIES_",
+        env_prefix="",
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,

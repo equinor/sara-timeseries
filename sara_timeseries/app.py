@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 if not settings.CLIENT_SECRET:
     raise RuntimeError(
-        "SARA_TIMESERIES_CLIENT_SECRET must be provided as an environment variable"
+        "CLIENT_SECRET must be provided as an environment variable"
     )
 
 USE_MOCK = os.getenv("USE_MOCK_TIMESERIES_API", "false").lower() == "true"
@@ -64,7 +64,6 @@ api: API = API(
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     setup_open_telemetry(app)
-    logger.info("OpenTelemetry setup complete.")
     yield
 
 
