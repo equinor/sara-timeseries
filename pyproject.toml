@@ -49,7 +49,7 @@ dynamic = ["version"]
 repository = "https://github.com/equinor/sara-timeseries.git"
 
 [project.optional-dependencies]
-dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock", "types-requests"]
+dev = ["black >= 26.1.0", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock", "types-requests"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
