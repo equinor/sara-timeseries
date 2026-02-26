@@ -20,8 +20,6 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-loguru==0.7.3
-    # via workflow_notifier (timeseries_mock/pyproject.toml)
 markupsafe==3.0.3
     # via
     #   flask
