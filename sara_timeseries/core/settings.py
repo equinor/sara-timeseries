@@ -10,10 +10,15 @@ class Settings(BaseSettings):
     FAST_API_PORT: int = Field(default=8200)
     RELOAD: bool = Field(default=False)
 
-    # Service principle authentication
-    CLIENT_ID: str = Field(default="38ab1ef9-d7ea-4e2b-ae4c-466ca70a1093")
     TENANT_ID: str = Field(default="3aa4a235-b6e2-48d5-9195-7fcf05b459b0")
-    CLIENT_SECRET: Optional[str] = Field(default=None)
+
+    # Ego auth
+    AZURE_CLIENT_ID: str = Field(default="dd7e115a-037e-4846-99c4-07561158a9cd")
+    AZURE_CLIENT_SECRET: Optional[str] = Field(default=None)
+
+    # Service principle authentication
+    TIMESERIES_CLIENT_ID: str = Field(default="38ab1ef9-d7ea-4e2b-ae4c-466ca70a1093")
+    TIMESERIES_CLIENT_SECRET: Optional[str] = Field(default=None)
 
     # OpenTelemetry
     OTEL_SERVICE_NAME: str = Field(default="sara-timeseries")

@@ -9,6 +9,7 @@ from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
     InsightsService,
 )
 from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
+from sara_timeseries.authetication import authentication_dependency
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +51,7 @@ class InsightsController:
             path="/insights/consolidate-co2-measurements",
             endpoint=self.get_consolidated_co2_insights,
             methods=["POST"],
+            dependencies=[authentication_dependency],
             summary="Retrieve consolidated CO2 measurements where the values are averaged",
             responses={
                 HTTPStatus.OK.value: {

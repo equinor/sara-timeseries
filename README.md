@@ -3,24 +3,18 @@
 The **SARA Timeseries** provides an automated process to upload data to Omnia Timeseries API.
 For more information about **Omnia Timeseries API**, see [Omnia](https://github.com/equinor/OmniaPlant)
 
-## Required Environment Variables
-
-| Env var                       | Description                    |
-| ----------------------------- | ------------------------------ |
-| CLIENT_SECRET                 | Omnia Timeseries Client Secret |
-
 ## Dependencies
 
 The dependencies used for this package are listed in [`pyproject.toml`](pyproject.toml) and pinned in [`requirements.txt`](requirements.txt).
 This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools))
 
-```
+```bash
 pip-compile --output-file=requirements.txt pyproject.toml
 ```
 
 To update the requirements to the latest versions, run the same command with the `--upgrade` flag:
 
-```
+```bash
 pip-compile --output-file=requirements.txt pyproject.toml --upgrade
 ```
 
@@ -39,12 +33,7 @@ python main.py
 ```bash
 docker build -t sara-timeseries .
 ```
-
-Export env vars
-
-```bash
-export CLIENT_SECRET="<client-secret-to-timeseries-api>"
-```
+Remember to export the environment variables. 
 
 ### Run the Docker image
 
