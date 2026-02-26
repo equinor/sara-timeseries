@@ -7,7 +7,7 @@ For more information about **Omnia Timeseries API**, see [Omnia](https://github.
 
 | Env var                       | Description                    |
 | ----------------------------- | ------------------------------ |
-| SARA_TIMESERIES_CLIENT_SECRET | Omnia Timeseries Client Secret |
+| CLIENT_SECRET                 | Omnia Timeseries Client Secret |
 
 ## Dependencies
 
@@ -43,7 +43,7 @@ docker build -t sara-timeseries .
 Export env vars
 
 ```bash
-export SARA_TIMESERIES_CLIENT_SECRET="<client-secret-to-timeseries-api>"
+export CLIENT_SECRET="<client-secret-to-timeseries-api>"
 ```
 
 ### Run the Docker image
