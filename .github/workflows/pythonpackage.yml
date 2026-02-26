@@ -36,8 +36,12 @@ jobs:
         run: |
           pytest
 
-      - name: Lint
+      - name: Black
         run: |
           black --check .
+      - name: Mypy
+        run: |
           mypy .
+      - name: Ruff
+        run: |
           ruff check .
