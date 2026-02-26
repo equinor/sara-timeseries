@@ -64,7 +64,6 @@ api: API = API(
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     setup_open_telemetry(app)
-    logger.info("OpenTelemetry setup complete.")
     yield
 
 
