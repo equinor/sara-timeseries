@@ -55,7 +55,7 @@ class InsightsController:
             summary="Retrieve consolidated CO2 measurements where the values are averaged",
             responses={
                 HTTPStatus.OK.value: {
-                    "description": "Successfully added datapoint to Timeseries API",
+                    "description": "Successfully consolidated CO2 measurements",
                     "model": InsightsRequest,
                 },
                 HTTPStatus.INTERNAL_SERVER_ERROR.value: {
