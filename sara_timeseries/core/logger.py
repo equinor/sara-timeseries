@@ -1,5 +1,7 @@
 from logging.config import dictConfig
 
+from sara_timeseries.core.settings import settings
+
 LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -16,7 +18,7 @@ LOGGING_CONFIG = {
     },
     "root": {
         "handlers": ["console"],
-        "level": "INFO",
+        "level": settings.LIB_LOG_LEVEL,
     },
     "loggers": {},
 }
