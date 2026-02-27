@@ -14,6 +14,7 @@ from omnia_timeseries.models import (
 )
 
 from sara_timeseries.api import API
+from sara_timeseries.authetication import validate_has_role
 from sara_timeseries.modules.sara_timeseries_api.omnia_service import OmniaService
 from sara_timeseries.modules.sara_timeseries_api.timeseries_controller import (
     TimeseriesController,
@@ -130,6 +131,11 @@ def test_client(mock_omnia_service: OmniaService) -> TestClient:
         insights_controller=insights_controller,
     )
     app: FastAPI = api.create_app()
+
+    def mock_validate_has_role() -> None:
+        pass
+
+    app.dependency_overrides[validate_has_role] = mock_validate_has_role
     return TestClient(app)
 
 

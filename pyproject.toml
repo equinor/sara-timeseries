@@ -27,13 +27,17 @@ classifiers = [
 dependencies = [
   "azure-identity",
   "azure-keyvault-secrets",
+  "azure-storage-blob",
   "pydantic",
   "pydantic-settings",
   "python-dotenv",
+  "fastapi-azure-auth",
   "fastapi>=0.121.0",
   "uvicorn",
   "pandas",
-  "starlette>=0.49.1",
+  "plotly",
+  "numpy",
+  "pillow",
   "omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main",
   "opentelemetry-api",
   "opentelemetry-sdk",
@@ -47,7 +51,7 @@ dynamic = ["version"]
 repository = "https://github.com/equinor/sara-timeseries.git"
 
 [project.optional-dependencies]
-dev = ["black", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock", "types-requests"]
+dev = ["black >= 26.1.0", "httpx", "mypy", "pip-tools", "pytest", "ruff", "pytest-mock", "types-requests"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

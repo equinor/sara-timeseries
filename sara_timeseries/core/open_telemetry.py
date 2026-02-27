@@ -36,6 +36,10 @@ def setup_open_telemetry(app: Optional[FastAPI] = None) -> None:
     endpoint = settings.OTEL_EXPORTER_OTLP_ENDPOINT
     protocol = settings.OTEL_EXPORTER_OTLP_PROTOCOL.lower()
 
+    if endpoint is None or endpoint.lower() == "none":
+        logger.warning("OTLP endpoint is set to None, skipping OpenTelemetry setup")
+        return
+
     logger.info(
         f"Setting up open telemetry with endpoint {endpoint} and protocol {protocol}"
     )
@@ -89,3 +93,5 @@ def setup_open_telemetry(app: Optional[FastAPI] = None) -> None:
     else:
         # Fallback if app not provided, though precise instrumentation is preferred
         FastAPIInstrumentor().instrument()
+
+    logger.info("OpenTelemetry setup complete.")

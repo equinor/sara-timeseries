@@ -1,0 +1,6 @@
+{
+  "top_left": { "east": 68, "north": 322 },
+  "top_right": { "east": 374, "north": 322 },
+  "bottom_left": { "east": 68, "north": 90 },
+  "bottom_right": { "east": 374, "north": 90 }
+}

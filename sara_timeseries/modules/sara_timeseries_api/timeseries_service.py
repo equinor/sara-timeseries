@@ -87,7 +87,8 @@ class TimeseriesService:
                 start_time=request.start_time,
                 end_time=request.end_time,
             )
-            return DatapointsResponseModel(data=data)
+            filtered_data = [d for d in data if d.get("robot_name") != "NLSBot"]
+            return DatapointsResponseModel(data=filtered_data)
 
         except Exception:
             logger.error("Failed to retrieve data from CO2 measurement timeseries")

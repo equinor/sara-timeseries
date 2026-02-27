@@ -6,6 +6,7 @@ from typing import AsyncIterator
 from fastapi import FastAPI
 
 from sara_timeseries.api import API
+from sara_timeseries.authetication import Authenticator
 from sara_timeseries.core.settings import settings
 from sara_timeseries.core.logger import setup_logger
 from sara_timeseries.core.open_telemetry import setup_open_telemetry
@@ -26,17 +27,17 @@ from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
 setup_logger()
 logger = logging.getLogger(__name__)
 
-if not settings.CLIENT_SECRET:
+if not settings.TIMESERIES_CLIENT_SECRET:
     raise RuntimeError(
-        "SARA_TIMESERIES_CLIENT_SECRET must be provided as an environment variable"
+        "TIMESERIES_CLIENT_SECRET must be provided as an environment variable"
     )
 
 USE_MOCK = os.getenv("USE_MOCK_TIMESERIES_API", "false").lower() == "true"
 
 # Services
 omnia_service = OmniaService(
-    client_id=settings.CLIENT_ID,
-    client_secret=settings.CLIENT_SECRET,
+    client_id=settings.TIMESERIES_CLIENT_ID,
+    client_secret=settings.TIMESERIES_CLIENT_SECRET,
     tenant_id=settings.TENANT_ID,
 )
 
@@ -59,12 +60,13 @@ insights_controller: InsightsController = InsightsController(
 api: API = API(
     timeseries_controller=timeseries_controller, insights_controller=insights_controller
 )
+authenticator = Authenticator()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     setup_open_telemetry(app)
-    logger.info("OpenTelemetry setup complete.")
+    await authenticator.load_config()
     yield
 
 

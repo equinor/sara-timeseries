@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Body, HTTPException
+import logging
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
     CO2ConcentrationRequestModel,
@@ -12,6 +13,9 @@ from sara_timeseries.modules.sara_timeseries_api.models import (
 from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
     TimeseriesService,
 )
+from sara_timeseries.authetication import authentication_dependency
+
+logger = logging.getLogger(__name__)
 
 
 class TimeseriesController:
@@ -27,6 +31,10 @@ class TimeseriesController:
             description="Data to be forwarded",
         ),
     ) -> ResponseModel:
+        logger.info(
+            f"Received request to ingest datapoint with name {data.name} to facility {data.facility} "
+            f"with timestamp {data.timestamp.isoformat()}"
+        )
         try:
             return self.timeseries_service.ingest_datapoint(datapoint=data)
         except Exception:
@@ -41,6 +49,10 @@ class TimeseriesController:
             description="Retrieve all CO2 measurements for the given facility and time window",
         ),
     ) -> DatapointsResponseModel:
+        logger.info(
+            f"Received request to retrieve CO2 measurements for facility {request.facility} and time window "
+            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",
+        )
         try:
             return self.timeseries_service.get_co2_measurements(request)
         except Exception:
@@ -73,6 +85,7 @@ class TimeseriesController:
             path="/timeseries/datapoint",
             endpoint=self.ingest_data,
             methods=["POST"],
+            dependencies=[authentication_dependency],
             summary="Forward a single datapoint to be inserted into the Timeseries API",
             responses={
                 HTTPStatus.OK.value: {
@@ -89,6 +102,7 @@ class TimeseriesController:
             path="/timeseries/get-co2-measurements",
             endpoint=self.get_co2_measurements,
             methods=["POST"],
+            dependencies=[authentication_dependency],
             summary="Retrieve all CO2 measurements for the given facility and time period",
             responses={
                 HTTPStatus.OK.value: {
@@ -105,6 +119,7 @@ class TimeseriesController:
             path="/timeseries/get-co2-concentration",
             endpoint=self.get_co2_concentration,
             methods=["POST"],
+            dependencies=[authentication_dependency],
             summary="Retrieve CO2 concentration for a single task using inspection name, task time range and facility",
             responses={
                 HTTPStatus.OK.value: {
