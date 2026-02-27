@@ -27,6 +27,7 @@ classifiers = [
 dependencies = [
   "azure-identity",
   "azure-keyvault-secrets",
+  "azure-storage-blob",
   "pydantic",
   "pydantic-settings",
   "python-dotenv",
