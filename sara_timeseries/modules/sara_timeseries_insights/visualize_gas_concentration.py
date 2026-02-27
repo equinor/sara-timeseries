@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 import base64
-import io
 import json
+import os
 import re
 from pathlib import Path
-from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.io as pio
-from PIL import Image
 from pydantic import BaseModel, field_validator
+import webbrowser
 
 
 class Position(BaseModel):
@@ -25,6 +24,13 @@ class Position(BaseModel):
         if not np.isfinite(value):
             raise ValueError("Coordinates must be finite numbers")
         return float(value)
+
+
+class MapCorners(BaseModel):
+    top_left: Position
+    top_right: Position
+    bottom_left: Position
+    bottom_right: Position
 
 
 INSPECTION_POSITION_REGEX = re.compile(
@@ -75,34 +81,15 @@ def coerce_metrics_and_time(
     return output
 
 
-def _image_to_data_uri(image: Union[str, Image.Image]) -> str:
-    """Return a data URI string for a local path or a PIL.Image"""
-    if isinstance(image, str):
-        path: Path = Path(image)
-        if not path.exists():
-            # Assume already a URL or data URI; return as-is (URLs won't embed)
-            return image
-        mime: str = {
-            ".png": "image/png",
-            ".jpg": "image/jpeg",
-            ".jpeg": "image/jpeg",
-            ".gif": "image/gif",
-            ".webp": "image/webp",
-        }.get(path.suffix.lower(), "image/png")
-        encoded: str = base64.b64encode(path.read_bytes()).decode("ascii")
-        return f"data:{mime};base64,{encoded}"
-
-    # PIL image → PNG data URI
-    buffer = io.BytesIO()
-    image.save(buffer, format="PNG")
-    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
-    return f"data:image/png;base64,{encoded}"
+def _image_bytes_to_data_uri(image_bytes_jpg: bytes) -> str:
+    encoded: str = base64.b64encode(image_bytes_jpg).decode("ascii")
+    return f"data:image/jpeg;base64,{encoded}"
 
 
 def add_backdrop_image_to_figure(
     figure: go.Figure,
-    image_path: Union[str, Image.Image],
-    corners: Mapping[str, Position],
+    image_bytes_jpg: bytes,
+    corners: MapCorners,
     *,
     opacity: float = 0.45,
     lock_to_bounds: bool = True,
@@ -112,12 +99,10 @@ def add_backdrop_image_to_figure(
     The image is embedded as a data URI so it travels with exported HTML.
     Returns (east_min, east_max, north_min, north_max).
     """
-    image_source: str = _image_to_data_uri(image_path)
+    image_source: str = _image_bytes_to_data_uri(image_bytes_jpg)
 
-    east_values: List[float] = [corner.east for corner in corners.values()]
-    north_values: List[float] = [corner.north for corner in corners.values()]
-    east_min, east_max = min(east_values), max(east_values)
-    north_min, north_max = min(north_values), max(north_values)
+    east_min, east_max = corners.bottom_left.east, corners.bottom_right.east
+    north_min, north_max = corners.bottom_left.north, corners.top_left.north
 
     figure.add_layout_image(
         dict(
@@ -263,7 +248,7 @@ def build_dropdown_buttons_with_dynamic_color_bars(
 # =========================
 
 
-def make_gas_concentration_plot(
+def make_gas_concentration_figure(
     dataframe_in: pd.DataFrame,
     *,
     metric_columns: Iterable[str] = (
@@ -273,8 +258,8 @@ def make_gas_concentration_plot(
         "value_count",
     ),
     metric_labels: Optional[Mapping[str, str]] = None,
-    image_path: Optional[Union[str, Image.Image]] = None,
-    corners: Optional[Mapping[str, Position]] = None,
+    image_bytes_jpg: Optional[bytes] = None,
+    corners: Optional[MapCorners] = None,
     title: str = "Timeseries Aggregates on Floorplan",
     colorscale_name: str = "Reds",
 ) -> go.Figure:
@@ -305,9 +290,9 @@ def make_gas_concentration_plot(
 
     # 3) build figure + bounds/backdrop
     figure = go.Figure()
-    if image_path is not None and corners is not None:
+    if image_bytes_jpg is not None and corners is not None:
         add_backdrop_image_to_figure(
-            figure, image_path, corners, opacity=1, lock_to_bounds=True
+            figure, image_bytes_jpg, corners, opacity=1, lock_to_bounds=True
         )
     else:
         set_bounds_from_point_data(figure, dataframe)
@@ -400,38 +385,59 @@ def make_gas_concentration_plot(
 # =========================
 
 
-def generate_gas_visualization(dataframe: pd.DataFrame) -> None:
-    corners_example: Dict[str, Position] = {
-        "top_left": Position(east=68, north=322),
-        "top_right": Position(east=374, north=322),
-        "bottom_left": Position(east=68, north=90),
-        "bottom_right": Position(east=374, north=90),
-    }
-
-    fig = make_gas_concentration_plot(
-        df_example,
+def generate_gas_visualization_html(
+    dataframe: pd.DataFrame, image_bytes_jpg: bytes, corners: MapCorners
+) -> bytes:
+    fig = make_gas_concentration_figure(
+        dataframe,
         metric_columns=(
             "value_mean",
             "value_max",
             "value_std",
         ),
-        image_path="full_image_grey.jpeg",
-        corners=corners_example,
-        title="CO₂ Measurement Aggregates (E–N view)",
+        image_bytes_jpg=image_bytes_jpg,
+        corners=corners,
+        title="CO₂ Measurement Aggregates (E-N view)",
         colorscale_name="OrRd",
     )
 
     # Show or export
-    fig.show()
-    pio.write_html(fig, file="co2_aggregates.html", auto_open=True)
+    # fig.show()
+    # pio.write_html(fig, file="co2_aggregates.html", auto_open=True)
+
+    fig_html_string = fig.to_html(full_html=True, include_plotlyjs="cdn")
+    fig_html_bytes = fig_html_string.encode("utf-8")
+
+    return fig_html_bytes
 
 
 if __name__ == "__main__":
-    # Load your aggregated JSON
-    with open("consolidated_co2_timeseries.json", "r") as fh:
+    with open(
+        "sara_timeseries/modules/sara_timeseries_insights/consolidated_co2_timeseries.json",
+        "r",
+    ) as fh:
         rows: List[Dict[str, object]] = json.load(fh)
     df_example = pd.DataFrame(rows)
-
     df_example = df_example[df_example["robot_name"] == "ROBOTNAME"]
 
-    generate_gas_visualization(df_example)
+    corners = MapCorners(
+        top_left=Position(east=68, north=322),
+        top_right=Position(east=374, north=322),
+        bottom_left=Position(east=68, north=90),
+        bottom_right=Position(east=374, north=90),
+    )
+    image_bytes_jpg = Path(
+        "sara_timeseries/modules/sara_timeseries_insights/map.jpeg"
+    ).read_bytes()
+
+    fig_html_bytes = generate_gas_visualization_html(
+        df_example, image_bytes_jpg=image_bytes_jpg, corners=corners
+    )
+    fig_html_string = fig_html_bytes.decode("utf-8")
+
+    filename = "co2_aggregates.html"
+    with open(filename, "w") as fh:
+        fh.write(fig_html_string)
+    path = os.path.abspath(filename)
+    url = "file://" + path
+    webbrowser.open(url)

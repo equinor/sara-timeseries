@@ -1,3 +1,4 @@
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
@@ -8,7 +9,12 @@ from sara_timeseries.modules.sara_timeseries_api.models import (
 from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
     TimeseriesService,
 )
-from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
+from sara_timeseries.modules.sara_timeseries_insights.blob_store import (
+    get_map_and_corners,
+)
+from sara_timeseries.modules.sara_timeseries_insights.visualize_gas_concentration import (
+    generate_gas_visualization_html,
+)
 
 
 def _percentile(x: Series, percentile: float) -> float:
@@ -60,13 +66,15 @@ class InsightsService:
     def __init__(self, timeseries_service: TimeseriesService) -> None:
         self.timeseries_service: TimeseriesService = timeseries_service
 
-    def consolidate_co2_measurements(self, request: InsightsRequest) -> DataFrame:
+    def consolidate_co2_measurements(
+        self, facility: str, start_time: datetime, end_time: datetime
+    ) -> DataFrame:
         measurements: DataFrame = pd.DataFrame(
             self.timeseries_service.get_co2_measurements(
                 DatapointsRequestModel(
-                    facility=request.facility,
-                    start_time=request.start_time,
-                    end_time=request.end_time,
+                    facility=facility,
+                    start_time=start_time,
+                    end_time=end_time,
                 )
             ).data
         )
@@ -74,3 +82,19 @@ class InsightsService:
         measurements["time"] = pd.to_datetime(measurements["time"])
         computed_indicators: DataFrame = _compute_indicators(measurements)
         return computed_indicators
+
+    def create_and_publish_CO2_report(
+        self, facility: str, start_time: datetime, end_time: datetime
+    ) -> bytes:
+        map_bytes_jpg, corners = get_map_and_corners(facility)
+        consolidated_data: DataFrame = self.consolidate_co2_measurements(
+            facility, start_time, end_time
+        )
+
+        html_bytes = generate_gas_visualization_html(
+            consolidated_data, image_bytes_jpg=map_bytes_jpg, corners=corners
+        )
+
+        # TODO: Publish report
+
+        return html_bytes

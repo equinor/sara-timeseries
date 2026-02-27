@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     OTEL_EXPORTER_OTLP_ENDPOINT: str = Field(default="http://localhost:4317")
     OTEL_EXPORTER_OTLP_PROTOCOL: str = Field(default="grpc")
 
+    # Blob store
+    BLOB_STORAGE_ACCOUNT_URL: str = Field(
+        default="https://saradevstoretime.blob.core.windows.net"
+    )
+
     # Application settings
     LIB_LOG_LEVEL: str = Field(
         default="INFO"

@@ -40,7 +40,11 @@ def test_consolidate_co2_measurements(insights_service: InsightsService) -> None
         start_time=datetime.now(timezone.utc),
         end_time=datetime.now(timezone.utc),
     )
-    df: DataFrame = insights_service.consolidate_co2_measurements(request=request)
+    df: DataFrame = insights_service.consolidate_co2_measurements(
+        facility=request.facility,
+        start_time=request.start_time,
+        end_time=request.end_time,
+    )
 
     assert df.shape[0] == 1
     assert math.isclose(df.loc[0, "value_mean"], 1.2139, abs_tol=0.01)
