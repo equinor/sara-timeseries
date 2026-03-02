@@ -37,13 +37,13 @@ cryptography==46.0.5
     #   msal
     #   omnia-timeseries
     #   pyjwt
-fastapi==0.133.1
+fastapi==0.135.1
     # via sara-timeseries (pyproject.toml)
 googleapis-common-protos==1.72.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
-grpcio==1.78.1
+grpcio==1.78.0
     # via opentelemetry-exporter-otlp-proto-grpc
 h11==0.16.0
     # via uvicorn
@@ -147,7 +147,7 @@ pyjwt[crypto]==2.11.0
     #   omnia-timeseries
 python-dateutil==2.9.0.post0
     # via pandas
-python-dotenv==1.2.1
+python-dotenv==1.2.2
     # via
     #   pydantic-settings
     #   sara-timeseries (pyproject.toml)
