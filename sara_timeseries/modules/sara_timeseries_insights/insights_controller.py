@@ -1,16 +1,17 @@
 from http import HTTPStatus
 from typing import Dict, List
 
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 import logging
 from fastapi.responses import StreamingResponse
+from fastapi_azure_auth.user import User
 from pandas import DataFrame
 
 from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
     InsightsService,
 )
 from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
-from sara_timeseries.authentication import authentication_dependency
+from sara_timeseries.authentication import authentication_dependency, azure_scheme
 
 logger = logging.getLogger(__name__)
 
@@ -57,17 +58,20 @@ class InsightsController:
             title="Create and publish CO2 report",
             description="Create and publish a CO2 report for the given facility and time window",
         ),
+        user: User = Depends(azure_scheme),
     ) -> StreamingResponse:
         logger.info(
             f"Received request to create and publish CO2 report for facility {request.facility} and time window "
             f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",
         )
         try:
-            html: bytes = self.insights_service.create_and_publish_CO2_report(
+            html = self.insights_service.create_CO2_report(
                 facility=request.facility,
                 start_time=request.start_time,
                 end_time=request.end_time,
             )
+            token = user.access_token
+            self.insights_service.publish_CO2_report(html=html, token=token)
             return StreamingResponse(iter([html]), media_type="text/html")
         except Exception:
             logger.exception("Failed to create and publish CO2 report.")

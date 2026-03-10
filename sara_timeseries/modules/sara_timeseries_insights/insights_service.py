@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
@@ -11,6 +12,10 @@ from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
 )
 from sara_timeseries.modules.sara_timeseries_insights.blob_store import (
     get_map_and_corners,
+)
+from sara_timeseries.modules.sara_timeseries_insights.sara_sap_api import (
+    SaraSapApi,
+    UploadedFile,
 )
 from sara_timeseries.modules.sara_timeseries_insights.visualize_gas_concentration import (
     generate_gas_visualization_html,
@@ -83,7 +88,7 @@ class InsightsService:
         computed_indicators: DataFrame = _compute_indicators(measurements)
         return computed_indicators
 
-    def create_and_publish_CO2_report(
+    def create_CO2_report(
         self, facility: str, start_time: datetime, end_time: datetime
     ) -> bytes:
         map_bytes_jpg, corners = get_map_and_corners(facility)
@@ -96,3 +101,10 @@ class InsightsService:
         )
 
         return html
+
+    def publish_CO2_report(self, html: bytes, token: str) -> List[UploadedFile]:
+        sara_sap_api = SaraSapApi(base_url="http://localhost:3017", token=token)
+        uploaded_files: List[UploadedFile] = sara_sap_api.post_upload_co2_report(
+            html=html
+        )
+        return uploaded_files
