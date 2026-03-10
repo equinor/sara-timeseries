@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 import base64
-import json
-import os
 import re
-from pathlib import Path
 from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from pydantic import BaseModel, field_validator
-import webbrowser
 
 
 class Position(BaseModel):
@@ -380,11 +376,6 @@ def make_gas_concentration_figure(
     return figure
 
 
-# =========================
-# Example usage
-# =========================
-
-
 def generate_gas_visualization_html(
     dataframe: pd.DataFrame, image_bytes_jpg: bytes, corners: MapCorners
 ) -> bytes:
@@ -401,43 +392,7 @@ def generate_gas_visualization_html(
         colorscale_name="OrRd",
     )
 
-    # Show or export
-    # fig.show()
-    # pio.write_html(fig, file="co2_aggregates.html", auto_open=True)
-
     fig_html_string = fig.to_html(full_html=True, include_plotlyjs="cdn")
     fig_html_bytes = fig_html_string.encode("utf-8")
 
     return fig_html_bytes
-
-
-if __name__ == "__main__":
-    with open(
-        "sara_timeseries/modules/sara_timeseries_insights/consolidated_co2_timeseries.json",
-        "r",
-    ) as fh:
-        rows: List[Dict[str, object]] = json.load(fh)
-    df_example = pd.DataFrame(rows)
-    df_example = df_example[df_example["robot_name"] == "ROBOTNAME"]
-
-    corners = MapCorners(
-        top_left=Position(east=68, north=322),
-        top_right=Position(east=374, north=322),
-        bottom_left=Position(east=68, north=90),
-        bottom_right=Position(east=374, north=90),
-    )
-    image_bytes_jpg = Path(
-        "sara_timeseries/modules/sara_timeseries_insights/map.jpeg"
-    ).read_bytes()
-
-    fig_html_bytes = generate_gas_visualization_html(
-        df_example, image_bytes_jpg=image_bytes_jpg, corners=corners
-    )
-    fig_html_string = fig_html_bytes.decode("utf-8")
-
-    filename = "co2_aggregates.html"
-    with open(filename, "w") as fh:
-        fh.write(fig_html_string)
-    path = os.path.abspath(filename)
-    url = "file://" + path
-    webbrowser.open(url)
