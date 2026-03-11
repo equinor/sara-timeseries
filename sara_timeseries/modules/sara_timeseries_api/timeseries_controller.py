@@ -13,7 +13,6 @@ from sara_timeseries.modules.sara_timeseries_api.models import (
 from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
     TimeseriesService,
 )
-from sara_timeseries.authentication import authentication_dependency
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +84,6 @@ class TimeseriesController:
             path="/timeseries/datapoint",
             endpoint=self.ingest_data,
             methods=["POST"],
-            dependencies=[authentication_dependency],
             summary="Forward a single datapoint to be inserted into the Timeseries API",
             responses={
                 HTTPStatus.OK.value: {
@@ -102,7 +100,6 @@ class TimeseriesController:
             path="/timeseries/get-co2-measurements",
             endpoint=self.get_co2_measurements,
             methods=["POST"],
-            dependencies=[authentication_dependency],
             summary="Retrieve all CO2 measurements for the given facility and time period",
             responses={
                 HTTPStatus.OK.value: {
@@ -119,7 +116,6 @@ class TimeseriesController:
             path="/timeseries/get-co2-concentration",
             endpoint=self.get_co2_concentration,
             methods=["POST"],
-            dependencies=[authentication_dependency],
             summary="Retrieve CO2 concentration for a single task using inspection name, task time range and facility",
             responses={
                 HTTPStatus.OK.value: {
