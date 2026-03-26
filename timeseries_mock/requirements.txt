@@ -25,7 +25,7 @@ markupsafe==3.0.3
     #   flask
     #   jinja2
     #   werkzeug
-requests==2.32.5
+requests==2.33.0
     # via workflow_notifier (timeseries_mock/pyproject.toml)
 urllib3==2.6.3
     # via requests
