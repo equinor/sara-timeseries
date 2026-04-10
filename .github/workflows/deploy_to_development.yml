@@ -27,11 +27,12 @@ jobs:
 
   build-and-push-dev-to-ghcr:
     name: Update containers in ghcr
+    needs: get-short-sha
     uses: ./.github/workflows/publish_component.yml
     with:
       Registry: ghcr.io
       ImageName: ${{ github.repository }}
-      Tag: ${{ github.event.release.tag_name }}
+      Tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
       SecondaryTag: dev
     secrets:
       RegistryUsername: ${{ github.actor }}
