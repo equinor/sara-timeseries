@@ -21,3 +21,4 @@ jobs:
       run-black: true
       run-mypy: true
       run-ruff: true
+      run-isort: false
