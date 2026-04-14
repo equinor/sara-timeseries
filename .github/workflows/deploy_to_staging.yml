@@ -14,44 +14,59 @@ on:
     types: [published]
 
 jobs:
-  build-and-push-release-to-dev-cr:
-    name: Update containers in dev with version tag
-    uses: ./.github/workflows/publish_component.yml
+  build-and-push-latest-release-image-to-aurora-dev-container-registry:
+    name: Build and push latest release image to aurora dev container registry
+    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
+    permissions:
+      contents: read
+      packages: write
     with:
-      Registry: auroradevacr.azurecr.io
-      ImageName: robotics/sara-timeseries
-      Tag: ${{ github.event.release.tag_name }}
+      registry: auroradevacr.azurecr.io
+      image_name: robotics/sara-timeseries
+      tag: ${{ github.event.release.tag_name }}
+      path_to_dockerfile: Dockerfile
+      path_to_context: .
     secrets:
-      RegistryUsername: ${{ secrets.ROBOTICS_AURORADEVACR_USERNAME }}
-      RegistryPassword: ${{ secrets.ROBOTICS_AURORADEVACR_PASSWORD }}
+      registry_username: ${{ secrets.ROBOTICS_AURORADEVACR_USERNAME }}
+      registry_password: ${{ secrets.ROBOTICS_AURORADEVACR_PASSWORD }}
 
-  build-and-push-release-to-ghcr:
-    name: Update containers in ghcr
-    uses: ./.github/workflows/publish_component.yml
+  build-and-push-latest-release-image-to-github-container-registry:
+    name: Build and push latest release image to github container registry
+    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
+    permissions:
+      contents: read
+      packages: write
     with:
-      Registry: ghcr.io
-      ImageName: ${{ github.repository }}
-      Tag: ${{ github.event.release.tag_name }}
-      SecondaryTag: latest
+      registry: ghcr.io
+      image_name: ${{ github.repository }}
+      tag: ${{ github.event.release.tag_name }}
+      secondary_tag: latest
+      path_to_dockerfile: Dockerfile
+      path_to_context: .
     secrets:
-      RegistryUsername: ${{ github.actor }}
-      RegistryPassword: ${{ secrets.GITHUB_TOKEN }}
+      registry_username: ${{ github.actor }}
+      registry_password: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-push-release-to-prod-cr:
-    name: Build and push containers to auroraprodcr for Staging/Production
-    uses: ./.github/workflows/publish_component.yml
+  build-and-push-latest-release-image-to-aurora-prod-container-registry:
+    name: Build and push latest release image to aurora prod container registry
+    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
+    permissions:
+      contents: read
+      packages: write
     with:
-      Registry: auroraprodacr.azurecr.io
-      ImageName: robotics/sara-timeseries
-      Tag: ${{ github.event.release.tag_name }}
-      SecondaryTag: "latest"
+      registry: auroraprodacr.azurecr.io
+      image_name: robotics/sara-timeseries
+      tag: ${{ github.event.release.tag_name }}
+      secondary_tag: latest
+      path_to_dockerfile: Dockerfile
+      path_to_context: .
     secrets:
-      RegistryUsername: ${{ secrets.ROBOTICS_AURORAPRODACR_USERNAME }}
-      RegistryPassword: ${{ secrets.ROBOTICS_AURORAPRODACR_PASSWORD }}
+      registry_username: ${{ secrets.ROBOTICS_AURORAPRODACR_USERNAME }}
+      registry_password: ${{ secrets.ROBOTICS_AURORAPRODACR_PASSWORD }}
 
   update-deployment-in-staging:
     name: Update deployment in Staging
-    needs: build-and-push-release-to-prod-cr
+    needs: build-and-push-latest-release-image-to-aurora-prod-container-registry
     uses: ./.github/workflows/update_aurora_deployment.yml
     with:
       Environment: staging
