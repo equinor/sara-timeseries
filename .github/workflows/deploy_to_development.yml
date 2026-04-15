@@ -63,13 +63,14 @@ jobs:
   deploy:
     name: Update deployment in Development
     needs: [build-and-push-dev-image-to-aurora-container-registry, get-short-sha]
-    uses: ./.github/workflows/update_aurora_deployment.yml
+    uses: equinor/armada/.github/workflows/update_kubernetes_deployment.yml@main
     with:
-      Environment: development
-      Registry: auroradevacr.azurecr.io
-      ImageName: robotics/sara-timeseries
-      Tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
-      AuthorEmail: ${{ github.event.head_commit.author.email }}
-      AuthorName: ${{ github.event.head_commit.author.name }}
+      environment: development
+      registry: auroradevacr.azurecr.io
+      image_name: robotics/sara-timeseries
+      tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
+      author_email: ${{ github.event.head_commit.author.email }}
+      author_name: ${{ github.event.head_commit.author.name }}
+      infrastructure_repository: equinor/analytics-infrastructure
     secrets:
-      DeployKey: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}
+      deploy_key: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}
