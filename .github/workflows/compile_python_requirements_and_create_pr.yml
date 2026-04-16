@@ -18,3 +18,13 @@ jobs:
       contents: write
       pull-requests: write
     uses: equinor/armada/.github/workflows/compile_python_requirements_and_create_pr.yml@main
+    strategy:
+      matrix:
+        includes:
+          - pyproject_file: pyproject.toml
+            output_requirements_file: requirements.txt
+          - pyproject_file: timeseries_mock/pyproject.toml
+            output_requirements_file: timeseries_mock/requirements-lock.txt
+    with:
+      pyproject_file: ${{ matrix.pyproject_file }}
+      output_requirements_file: ${{ matrix.output_requirements_file }}
