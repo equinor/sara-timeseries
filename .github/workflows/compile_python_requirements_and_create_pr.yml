@@ -29,4 +29,4 @@ jobs:
     uses: equinor/armada/.github/workflows/compile_python_requirements_and_create_pr.yml@main
     with:
       pyproject_file: timeseries_mock/pyproject.toml
-      output_requirements_file: timeseries_mock/requirements-lock.txt
+      output_requirements_file: timeseries_mock/requirements.txt
