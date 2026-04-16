@@ -149,7 +149,7 @@ opentelemetry-util-http==0.62b0
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-requests
-packaging==26.0
+packaging==26.1
     # via
     #   opentelemetry-instrumentation
     #   plotly
@@ -165,12 +165,12 @@ protobuf==6.33.6
     #   opentelemetry-proto
 pycparser==3.0
     # via cffi
-pydantic==2.13.0
+pydantic==2.13.1
     # via
     #   fastapi
     #   pydantic-settings
     #   sara-timeseries (pyproject.toml)
-pydantic-core==2.46.0
+pydantic-core==2.46.1
     # via pydantic
 pydantic-settings==2.13.1
     # via sara-timeseries (pyproject.toml)
