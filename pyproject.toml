@@ -7,7 +7,7 @@ name = "sara-timeseries"
 authors = [{ name = "Equinor ASA", email = "fg_robots_dev@equinor.com" }]
 description = "Component for uploading datapoints to Omnia Timeseries"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 license = {file = "LICENSE"}
 classifiers = [
   "Intended Audience :: Developers",
@@ -15,11 +15,7 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Physics",
   "Topic :: Software Development :: Libraries",
