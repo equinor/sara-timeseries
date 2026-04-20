@@ -55,7 +55,6 @@ dev = [
   "black >= 26.1.0", 
   "httpx", 
   "mypy", 
-  "pip-tools", 
   "pytest", 
   "ruff", 
   "pytest-mock", 

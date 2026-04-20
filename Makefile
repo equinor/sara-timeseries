@@ -1,4 +1,4 @@
 format:
-	mypy .
-	black .
-	ruff check . --fix
+	uv run mypy .
+	uv run black .
+	uv run ruff check . --fix
