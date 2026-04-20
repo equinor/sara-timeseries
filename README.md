@@ -5,17 +5,17 @@ For more information about **Omnia Timeseries API**, see [Omnia](https://github.
 
 ## Dependencies
 
-The dependencies used for this package are listed in [`pyproject.toml`](pyproject.toml) and pinned in [`requirements.txt`](requirements.txt).
-This ensures our builds are predictable and deterministic. This project uses `pip-compile` (from [`pip-tools`](https://github.com/jazzband/pip-tools))
+The dependencies used for this package are listed in [`pyproject.toml`](pyproject.toml) and pinned in [`uv.lock`](uv.lock).
+This ensures our builds are predictable and deterministic. This project uses [uv](https://docs.astral.sh/uv/) for dependency management:
 
 ```bash
-pip-compile --output-file=requirements.txt pyproject.toml
+uv lock
 ```
 
-To update the requirements to the latest versions, run the same command with the `--upgrade` flag:
+To update the dependencies to the latest versions, run:
 
 ```bash
-pip-compile --output-file=requirements.txt pyproject.toml --upgrade
+uv lock --upgrade
 ```
 
 ### Fast API App
