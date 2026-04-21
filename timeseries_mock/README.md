@@ -19,8 +19,24 @@ To update the dependencies to the latest versions, run:
 uv lock --upgrade
 ```
 
-## Run
-
+## Run tests
+Install packages
 ```
-python omnia_timeseries_mock.py
+uv sync --extra dev
+```
+Run tests
+```
+uv run pytest .
+```
+
+## Run the mock
+Install dependencies
+```
+cd timeseries_mock
+uv sync
+```
+
+Start mock
+```
+uv run python omnia_timeseries_mock.py
 ```
