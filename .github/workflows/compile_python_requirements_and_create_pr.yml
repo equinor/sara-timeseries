@@ -13,16 +13,10 @@ permissions:
   pull-requests: write
 
 jobs:
-  compile-requirements-and-create-pr:
-    permissions:
-      contents: write
-      pull-requests: write
-    uses: equinor/armada/.github/workflows/compile_python_requirements_and_create_pr.yml@main
-
   compile-requirements-and-create-pr-on-mock:
     permissions:
       contents: write
       pull-requests: write
     uses: equinor/armada/.github/workflows/compile_python_requirements_and_create_pr.yml@main
     with:
-      project_name: timeseries_mock
+      project_names: .,timeseries_mock
