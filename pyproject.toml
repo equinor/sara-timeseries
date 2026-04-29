@@ -34,7 +34,7 @@ dependencies = [
   "plotly",
   "numpy",
   "pillow",
-  "omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@v1.4.3",
+  "omnia_timeseries @ git+https://github.com/equinor/omnia-timeseries-python.git@main",
   "opentelemetry-api",
   "opentelemetry-sdk",
   "opentelemetry-exporter-otlp",
