@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # Service principle authentication
     TIMESERIES_CLIENT_ID: str = Field(default="38ab1ef9-d7ea-4e2b-ae4c-466ca70a1093")
     TIMESERIES_CLIENT_SECRET: Optional[str] = Field(default=None)
+    USE_OMNIA_TIMESERIES_TEST_ENVIRONMENT: bool = Field(default=True)
 
     # OpenTelemetry
     OTEL_SERVICE_NAME: str = Field(default="sara-timeseries")

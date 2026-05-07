@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import Dict, List
 import logging
 
+from sara_timeseries.core.settings import settings
+
 from azure.identity import ClientSecretCredential
 from omnia_timeseries.api import (
     DatapointModel,
@@ -31,7 +33,11 @@ class OmniaService:
         client_id: str,
         client_secret: str,
         tenant_id: str,
-        environment: TimeseriesEnvironment = TimeseriesEnvironment.Test(),
+        environment: TimeseriesEnvironment = (
+            TimeseriesEnvironment.Test()
+            if settings.USE_OMNIA_TIMESERIES_TEST_ENVIRONMENT
+            else TimeseriesEnvironment.Prod()
+        ),
     ) -> None:
         """
         Initializes the OmniaService with Azure credentials.
