@@ -1,8 +1,8 @@
 import json
 
-from azure.identity import ClientSecretCredential
 from azure.storage.blob import BlobClient, BlobServiceClient, ContainerClient
 
+from sara_timeseries.core.credentials import build_credential
 from sara_timeseries.core.settings import settings
 from sara_timeseries.modules.sara_timeseries_insights.visualize_gas_concentration import (
     MapCorners,
@@ -10,10 +10,14 @@ from sara_timeseries.modules.sara_timeseries_insights.visualize_gas_concentratio
 
 
 def get_map_and_corners(facility: str) -> tuple[bytes, MapCorners]:
-    if settings.AZURE_CLIENT_SECRET is None:
-        raise ValueError("Azure client secret is not set in settings")
-
-    credentials = ClientSecretCredential(
+    # In AKS, WorkloadIdentityCredential reads the federated token mounted by
+    # the workload-identity webhook (the pod's service account is annotated
+    # with the sara app registration client ID). Locally, AzureCliCredential
+    # is used (`az login`). The chain is configurable via
+    # SARA_TIMESERIES_AZURE_AUTH_METHODS; "ClientSecret" can be added when a
+    # secret-based fallback is needed.
+    credentials = build_credential(
+        settings.AZURE_AUTH_METHODS,
         tenant_id=settings.TENANT_ID,
         client_id=settings.AZURE_CLIENT_ID,
         client_secret=settings.AZURE_CLIENT_SECRET,

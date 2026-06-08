@@ -14,7 +14,19 @@ class Settings(BaseSettings):
 
     # Ego auth
     AZURE_CLIENT_ID: str = Field(default="dd7e115a-037e-4846-99c4-07561158a9cd")
+
+    # Optional client secret for the sara app registration. Only consumed when
+    # "ClientSecret" is included in AZURE_AUTH_METHODS (off by default).
     AZURE_CLIENT_SECRET: Optional[str] = Field(default=None)
+
+    # Ordered list of credential types attempted when authenticating to Azure
+    # resources (e.g. Blob Storage). The first one that yields a token wins;
+    # subsequent entries are tried only on CredentialUnavailableError. Mirrors
+    # sara's AzureAd:AllowedAuthMethods. Supported: "WorkloadIdentity",
+    # "AzureCli", "ClientSecret".
+    AZURE_AUTH_METHODS: list[str] = Field(
+        default_factory=lambda: ["WorkloadIdentity", "AzureCli"]
+    )
 
     # Service principle authentication
     TIMESERIES_CLIENT_ID: str = Field(default="38ab1ef9-d7ea-4e2b-ae4c-466ca70a1093")
