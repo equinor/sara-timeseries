@@ -1,4 +1,5 @@
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,7 +23,7 @@ class API:
         self.insights_controller: InsightsController = insights_controller
 
     def create_app(
-        self, lifespan: Optional[Callable[[FastAPI], Any]] = None
+        self, lifespan: Callable[[FastAPI], Any] | None = None
     ) -> FastAPI:
         app = FastAPI(
             lifespan=lifespan,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import re
-from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from collections.abc import Iterable, Mapping, Sequence
 
 import numpy as np
 import pandas as pd
@@ -34,9 +34,9 @@ INSPECTION_POSITION_REGEX = re.compile(
 )
 
 
-def parse_position_from_inspection_description(description: str) -> Optional[Position]:
+def parse_position_from_inspection_description(description: str) -> Position | None:
     """Parse 'CO2 E### N###' → Position(east, north)"""
-    regex_match: Optional[re.Match[str]] = INSPECTION_POSITION_REGEX.search(description)
+    regex_match: re.Match[str] | None = INSPECTION_POSITION_REGEX.search(description)
     if not regex_match:
         return None
     return Position(
@@ -89,7 +89,7 @@ def add_backdrop_image_to_figure(
     *,
     opacity: float = 0.45,
     lock_to_bounds: bool = True,
-) -> Tuple[float, float, float, float]:
+) -> tuple[float, float, float, float]:
     """
     Place an axis-aligned floorplan using Position corners and (optionally) lock axes.
     The image is embedded as a data URI so it travels with exported HTML.
@@ -150,7 +150,7 @@ def set_bounds_from_point_data(figure: go.Figure, dataframe: pd.DataFrame) -> No
 
 def compute_limits_for_color_bar(
     series: pd.Series, high_quantile: float = 0.95
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Robust color limits with lower bound locked at 0.0 and upper bound at the given quantile.
     Ignores NaNs; returns (0.0, 1.0) if the series is empty.
@@ -174,14 +174,14 @@ def build_metric_traces_with_individual_color_bars(
     custom_data: np.ndarray,
     dropdown_label_for_metric: Mapping[str, str],
     colorscale_name: str,
-    color_bars: Mapping[str, Tuple[float, float]],
-) -> List[go.Scattergl]:
+    color_bars: Mapping[str, tuple[float, float]],
+) -> list[go.Scattergl]:
     """
     Build one trace per metric, each with its own colorbar and dynamic cmin/cmax.
     Only the visible trace's colorbar shows; others hide with the trace.
     Hover shows only: Value, Count, E/N.
     """
-    traces: List[go.Scattergl] = []
+    traces: list[go.Scattergl] = []
     for index, metric_column in enumerate(metric_columns):
         cmin, cmax = color_bars[metric_column]
         display_name = dropdown_label_for_metric.get(metric_column, metric_column)
@@ -219,9 +219,9 @@ def build_dropdown_buttons_with_dynamic_color_bars(
     *,
     title_base: str,
     dropdown_label_for_metric: Mapping[str, str],
-) -> List[Dict[str, object]]:
+) -> list[dict[str, object]]:
     """Dropdown buttons that toggle visibility and update figure title to the active metric label."""
-    buttons: List[Dict[str, object]] = []
+    buttons: list[dict[str, object]] = []
     for index, metric_column in enumerate(metric_columns):
         visibility_mask = [False] * len(metric_columns)
         visibility_mask[index] = True
@@ -253,9 +253,9 @@ def make_gas_concentration_figure(
         "value_std",
         "value_count",
     ),
-    metric_labels: Optional[Mapping[str, str]] = None,
-    image_bytes_jpg: Optional[bytes] = None,
-    corners: Optional[MapCorners] = None,
+    metric_labels: Mapping[str, str] | None = None,
+    image_bytes_jpg: bytes | None = None,
+    corners: MapCorners | None = None,
     title: str = "Timeseries Aggregates on Floorplan",
     colorscale_name: str = "Reds",
 ) -> go.Figure:
@@ -264,7 +264,7 @@ def make_gas_concentration_figure(
     Uses per-metric dynamic color ranges (0 → 95th percentile) with individual color bars.
     """
     # 1) choose metrics and coerce types
-    selected_metrics: List[str] = [
+    selected_metrics: list[str] = [
         m for m in metric_columns if m in dataframe_in.columns
     ]
     if not selected_metrics:
@@ -294,7 +294,7 @@ def make_gas_concentration_figure(
         set_bounds_from_point_data(figure, dataframe)
 
     # 4) human-friendly dropdown labels
-    dropdown_label_for_metric: Dict[str, str] = {
+    dropdown_label_for_metric: dict[str, str] = {
         "value_mean": "Mean",
         "value_max": "Max",
         "value_std": "Std Dev",
@@ -303,7 +303,7 @@ def make_gas_concentration_figure(
 
     # 5) Fixed color ranges for consistency between runs
     # These values set where "OrRd" becomes dark.
-    color_bars: Dict[str, Tuple[float, float]] = {}
+    color_bars: dict[str, tuple[float, float]] = {}
 
     for metric in selected_metrics:
         if metric == "value_mean":
@@ -320,7 +320,7 @@ def make_gas_concentration_figure(
             color_bars[metric] = compute_limits_for_color_bar(dataframe[metric])
 
     # 6) traces (each owns its color bar)
-    traces: List[go.Scattergl] = build_metric_traces_with_individual_color_bars(
+    traces: list[go.Scattergl] = build_metric_traces_with_individual_color_bars(
         dataframe,
         selected_metrics,
         custom_data=custom_data,
@@ -331,7 +331,7 @@ def make_gas_concentration_figure(
     figure.add_traces(traces)
 
     # 7) dropdown UI
-    buttons: List[Dict[str, object]] = build_dropdown_buttons_with_dynamic_color_bars(
+    buttons: list[dict[str, object]] = build_dropdown_buttons_with_dynamic_color_bars(
         selected_metrics,
         title_base=title,
         dropdown_label_for_metric=dropdown_label_for_metric,

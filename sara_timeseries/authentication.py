@@ -1,8 +1,10 @@
 import logging
+
 from fastapi import Depends, Security
 from fastapi_azure_auth import SingleTenantAzureAuthorizationCodeBearer
 from fastapi_azure_auth.exceptions import InvalidAuthHttp
 from fastapi_azure_auth.user import User
+
 from sara_timeseries.core.settings import settings
 
 azure_scheme = SingleTenantAzureAuthorizationCodeBearer(

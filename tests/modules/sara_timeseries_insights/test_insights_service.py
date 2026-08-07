@@ -1,11 +1,10 @@
 import json
 import math
 import os
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Dict, List
-from unittest.mock import MagicMock
 import webbrowser
+from datetime import UTC, datetime
+from pathlib import Path
+from unittest.mock import MagicMock
 
 import pandas as pd
 import pytest
@@ -38,15 +37,15 @@ def insights_service() -> InsightsService:
 
 
 def test_consolidate_co2_measurements(insights_service: InsightsService) -> None:
-    co2_measurements_test_data: List[Dict] = _read_co2_test_data()
+    co2_measurements_test_data: list[dict] = _read_co2_test_data()
     insights_service.timeseries_service.get_co2_measurements.return_value = (  # type: ignore
         DatapointsResponseModel(data=co2_measurements_test_data)
     )
 
     request: InsightsRequest = InsightsRequest(
         facility="FACILITY",
-        start_time=datetime.now(timezone.utc),
-        end_time=datetime.now(timezone.utc),
+        start_time=datetime.now(UTC),
+        end_time=datetime.now(UTC),
     )
     df: DataFrame = insights_service.consolidate_co2_measurements(
         facility=request.facility,
@@ -63,8 +62,8 @@ def test_consolidate_co2_measurements(insights_service: InsightsService) -> None
     assert math.isclose(df.loc[0, "value_p75"], 1.7461, abs_tol=0.01)
 
 
-def _read_co2_test_data() -> List[Dict]:
-    data: List[Dict]
+def _read_co2_test_data() -> list[dict]:
+    data: list[dict]
     with open(
         os.path.join(os.path.dirname(__file__), "test_data", "co2_measurements.json"),
         "r",
@@ -93,7 +92,7 @@ def mock_consolidate_co2_measurements() -> DataFrame:
         "tests/modules/sara_timeseries_insights/test_data/consolidated_co2_timeseries.json",
         "r",
     ) as fh:
-        rows: List[Dict[str, object]] = json.load(fh)
+        rows: list[dict[str, object]] = json.load(fh)
     df_example = pd.DataFrame(rows)
     df_example = df_example[df_example["robot_name"] == "ROBOTNAME"]
     return df_example
@@ -114,8 +113,8 @@ def test_create_html_report(
 
     html: bytes = insights_service.create_CO2_report(
         facility="FACILITY",
-        start_time=datetime.now(timezone.utc),
-        end_time=datetime.now(timezone.utc),
+        start_time=datetime.now(UTC),
+        end_time=datetime.now(UTC),
     )
 
     assert html is not None
@@ -136,8 +135,8 @@ def test_view_co2_report(
     )
     html_bytes: bytes = insights_service.create_CO2_report(
         facility="FACILITY",
-        start_time=datetime.now(timezone.utc),
-        end_time=datetime.now(timezone.utc),
+        start_time=datetime.now(UTC),
+        end_time=datetime.now(UTC),
     )
     html_string = html_bytes.decode("utf-8")
 
