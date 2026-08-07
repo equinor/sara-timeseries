@@ -1,8 +1,5 @@
-from datetime import datetime
-from typing import Dict, List
 import logging
-
-from sara_timeseries.core.settings import settings
+from datetime import datetime
 
 from azure.identity import ClientSecretCredential
 from omnia_timeseries.api import (
@@ -14,7 +11,6 @@ from omnia_timeseries.api import (
     TimeseriesEnvironment,
     TimeseriesRequestItem,
 )
-
 from omnia_timeseries.models import (
     AggregateItemModel,
     GetAggregatesResponseModel,
@@ -22,9 +18,16 @@ from omnia_timeseries.models import (
     TimeseriesModel,
 )
 
+from sara_timeseries.core.settings import settings
+
 logger = logging.getLogger(__name__)
 
 TIMESERIES_STATUS_GOOD = 192
+_TIMESERIES_ENVIRONMENT = (
+    TimeseriesEnvironment.Test()
+    if settings.USE_OMNIA_TIMESERIES_TEST_ENVIRONMENT
+    else TimeseriesEnvironment.Prod()
+)
 
 
 class OmniaService:
@@ -33,11 +36,7 @@ class OmniaService:
         client_id: str,
         client_secret: str,
         tenant_id: str,
-        environment: TimeseriesEnvironment = (
-            TimeseriesEnvironment.Test()
-            if settings.USE_OMNIA_TIMESERIES_TEST_ENVIRONMENT
-            else TimeseriesEnvironment.Prod()
-        ),
+        environment: TimeseriesEnvironment = _TIMESERIES_ENVIRONMENT,
     ) -> None:
         """
         Initializes the OmniaService with Azure credentials.
@@ -58,7 +57,7 @@ class OmniaService:
         unit: str,
         asset_id: str,
         step: bool = True,
-        metadata: dict = {},
+        metadata: dict | None = None,
     ) -> str:
         """
         Retrieves or adds a timeseries
@@ -72,7 +71,7 @@ class OmniaService:
             unit=unit,
             step=step,
             assetId=asset_id,
-            metadata=metadata,
+            metadata=metadata if metadata is not None else {},
         )
         try:
             response: GetTimeseriesResponseModel = self.api.get_or_add_timeseries(
@@ -106,7 +105,7 @@ class OmniaService:
             return x
         except Exception as e:
             logger.error(f"Error writing to timeseries: {e}")
-            raise e
+            raise
 
     def cleanup_timeseries(self, timeseries_id: str) -> None:
         """
@@ -123,7 +122,7 @@ class OmniaService:
 
     def read_all_timeseries_by_description(
         self, description: str
-    ) -> List[TimeseriesModel]:
+    ) -> list[TimeseriesModel]:
         """
         Reads all timeseries from the API which match the given description.
         """
@@ -134,11 +133,11 @@ class OmniaService:
 
     def read_timeseries_by_description_and_facility(
         self, description: str, facility: str
-    ) -> List[TimeseriesModel]:
+    ) -> list[TimeseriesModel]:
         """
         Reads all timeseries from the API which match the given description and facility.
         """
-        timeseries: List[TimeseriesModel] = self.read_all_timeseries_by_description(
+        timeseries: list[TimeseriesModel] = self.read_all_timeseries_by_description(
             description
         )
         return self._filter_timeseries_by_facility(
@@ -147,7 +146,7 @@ class OmniaService:
 
     def read_timeseries_by_description_and_facility_and_name(
         self, description: str, facility: str, name: str
-    ) -> List[TimeseriesModel]:
+    ) -> list[TimeseriesModel]:
         """
         Reads all timeseries from the API which match the given description, facility, and name.
         """
@@ -158,59 +157,59 @@ class OmniaService:
 
     def read_data_from_multiple_timeseries(
         self,
-        timeseries: List[TimeseriesModel],
+        timeseries: list[TimeseriesModel],
         start_time: datetime,
         end_time: datetime,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """
         Reads all datapoints in the given timeseries within the given time range.
         """
-        requests: List[List[GetMultipleDatapointsRequestItem]] = (
+        requests: list[list[GetMultipleDatapointsRequestItem]] = (
             self._build_api_requests(end_time, start_time, timeseries)
         )
-        data: List[GetAggregatesResponseModel] = self._request_data_from_api(requests)
-        flattened_data: List[Dict] = self._flatten_data(data)
+        data: list[GetAggregatesResponseModel] = self._request_data_from_api(requests)
+        flattened_data: list[dict] = self._flatten_data(data)
 
         return flattened_data
 
     @staticmethod
     def _filter_timeseries_by_facility(
-        facility: str, timeseries: List[TimeseriesModel]
-    ) -> List[TimeseriesModel]:
+        facility: str, timeseries: list[TimeseriesModel]
+    ) -> list[TimeseriesModel]:
         return [series for series in timeseries if series.get("facility") == facility]
 
     @staticmethod
     def _data_request_must_be_split(
-        timeseries: List[TimeseriesModel], request_limit: int
+        timeseries: list[TimeseriesModel], request_limit: int
     ) -> bool:
-        return True if len(timeseries) > request_limit else False
+        return len(timeseries) > request_limit
 
     @staticmethod
-    def _split_list(data: List, n: int) -> List[List]:
+    def _split_list(data: list, n: int) -> list[list]:
         return [data[i : i + n] for i in range(0, len(data), n)]
 
     @staticmethod
-    def _flatten_timeseries_response(d: TimeseriesModel) -> Dict:
-        flattened: Dict = {k: v for k, v in d.items() if k != "metadata"}
+    def _flatten_timeseries_response(d: TimeseriesModel) -> dict:
+        flattened: dict = {k: v for k, v in d.items() if k != "metadata"}
 
-        metadata: Dict = d.get("metadata")
+        metadata: dict = d.get("metadata")
         if isinstance(metadata, dict):
             flattened.update(metadata)
 
         return flattened
 
-    def _flatten_data(self, data: List[GetAggregatesResponseModel]) -> List[Dict]:
-        squashed_data: List[AggregateItemModel] = [
+    def _flatten_data(self, data: list[GetAggregatesResponseModel]) -> list[dict]:
+        squashed_data: list[AggregateItemModel] = [
             item for d in data for item in d["data"]["items"]
         ]
-        flattened_data: List[Dict] = [
+        flattened_data: list[dict] = [
             {"id": d["id"], **dp}
             for d in squashed_data
             for dp in d.get("datapoints", [])
         ]
         for d in flattened_data:
             series: GetTimeseriesResponseModel = self.api.get_timeseries_by_id(d["id"])
-            flattened_series: Dict = self._flatten_timeseries_response(
+            flattened_series: dict = self._flatten_timeseries_response(
                 series["data"]["items"][0]
             )
             d.update(flattened_series)
@@ -218,9 +217,9 @@ class OmniaService:
         return flattened_data
 
     def _request_data_from_api(
-        self, requests: List[List[GetMultipleDatapointsRequestItem]]
-    ) -> List[GetAggregatesResponseModel]:
-        data: List[GetAggregatesResponseModel] = [
+        self, requests: list[list[GetMultipleDatapointsRequestItem]]
+    ) -> list[GetAggregatesResponseModel]:
+        data: list[GetAggregatesResponseModel] = [
             self.api.get_multi_datapoints(req) for req in requests
         ]
         return data
@@ -229,10 +228,10 @@ class OmniaService:
         self,
         end_time: datetime,
         start_time: datetime,
-        timeseries: List[TimeseriesModel],
-    ) -> List[List[GetMultipleDatapointsRequestItem]]:
+        timeseries: list[TimeseriesModel],
+    ) -> list[list[GetMultipleDatapointsRequestItem]]:
         timeseries_api_request_limit: int = 100
-        request: List[GetMultipleDatapointsRequestItem] = [
+        request: list[GetMultipleDatapointsRequestItem] = [
             {
                 "id": item["id"],
                 "startTime": start_time.isoformat(),
@@ -242,7 +241,7 @@ class OmniaService:
             for item in timeseries
         ]
 
-        requests: List[List[GetMultipleDatapointsRequestItem]] = [request]
+        requests: list[list[GetMultipleDatapointsRequestItem]] = [request]
         if self._data_request_must_be_split(timeseries, timeseries_api_request_limit):
             requests = self._split_list(request, timeseries_api_request_limit)
 

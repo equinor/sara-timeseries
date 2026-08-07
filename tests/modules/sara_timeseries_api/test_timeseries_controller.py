@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Dict
 from unittest.mock import MagicMock, Mock
 
 import pytest
@@ -7,10 +6,10 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from omnia_timeseries.api import MessageModel
 from omnia_timeseries.models import (
-    GetTimeseriesResponseModel,
-    TimeseriesModel,
     AggregateModel,
     GetAggregatesResponseModel,
+    GetTimeseriesResponseModel,
+    TimeseriesModel,
 )
 
 from sara_timeseries.api import API
@@ -250,7 +249,7 @@ def test_get_datapoints_for_all_timeseries_matching_facility_and_description(
     test_client: TestClient,
     mock_omnia_service: OmniaService,
 ) -> None:
-    payload: Dict = {
+    payload: dict = {
         "facility": facility,
         "start_time": (
             datetime.fromisoformat(timestamp) - timedelta(weeks=1)
@@ -261,7 +260,7 @@ def test_get_datapoints_for_all_timeseries_matching_facility_and_description(
     }
 
     response = test_client.post("/timeseries/get-co2-measurements", json=payload)
-    output: Dict = response.json()
+    output: dict = response.json()
     assert response.status_code == 200
     assert len(output["data"]) == len(
         get_multi_datapoint_return_value["data"]["items"][0]["datapoints"]

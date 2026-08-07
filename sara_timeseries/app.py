@@ -1,15 +1,15 @@
-import os
 import logging
+import os
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from fastapi import FastAPI
 
 from sara_timeseries.api import API
 from sara_timeseries.authentication import Authenticator
-from sara_timeseries.core.settings import settings
 from sara_timeseries.core.logger import setup_logger
 from sara_timeseries.core.open_telemetry import setup_open_telemetry
+from sara_timeseries.core.settings import settings
 from sara_timeseries.modules.sara_timeseries_api.omnia_service import OmniaService
 from sara_timeseries.modules.sara_timeseries_api.timeseries_controller import (
     TimeseriesController,

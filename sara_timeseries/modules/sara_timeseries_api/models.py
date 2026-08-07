@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Dict, List
 
 from pydantic import BaseModel
 
@@ -37,4 +36,4 @@ class CO2ConcentrationRequestModel(BaseModel):
 
 
 class DatapointsResponseModel(BaseModel):
-    data: List[Dict]
+    data: list[dict]

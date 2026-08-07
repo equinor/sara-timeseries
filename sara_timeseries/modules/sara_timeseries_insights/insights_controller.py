@@ -1,17 +1,16 @@
+import logging
 from http import HTTPStatus
-from typing import Dict, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
-import logging
 from fastapi.responses import StreamingResponse
 from fastapi_azure_auth.user import User
 from pandas import DataFrame
 
+from sara_timeseries.authentication import authentication_dependency, azure_scheme
 from sara_timeseries.modules.sara_timeseries_insights.insights_service import (
     InsightsService,
 )
 from sara_timeseries.modules.sara_timeseries_insights.models import InsightsRequest
-from sara_timeseries.authentication import authentication_dependency, azure_scheme
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ class InsightsController:
             title="SARA Timeseries Co2 Measurements",
             description="Retrieve a consolidated overview of CO2 measurements for the given facility and time window",
         ),
-    ) -> List[Dict]:
+    ) -> list[dict]:
         logger.info(
             f"Received request to consolidate CO2 measurements for facility {request.facility} and time window "
             f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",

@@ -1,14 +1,14 @@
+import logging
 from http import HTTPStatus
 
 from fastapi import APIRouter, Body, HTTPException
-import logging
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
     CO2ConcentrationRequestModel,
-    RequestModel,
-    ResponseModel,
     DatapointsRequestModel,
     DatapointsResponseModel,
+    RequestModel,
+    ResponseModel,
 )
 from sara_timeseries.modules.sara_timeseries_api.timeseries_service import (
     TimeseriesService,

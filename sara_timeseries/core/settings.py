@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -17,7 +15,7 @@ class Settings(BaseSettings):
 
     # Optional client secret for the sara app registration. Only consumed when
     # "ClientSecret" is included in AZURE_AUTH_METHODS (off by default).
-    AZURE_CLIENT_SECRET: Optional[str] = Field(default=None)
+    AZURE_CLIENT_SECRET: str | None = Field(default=None)
 
     # Ordered list of credential types attempted when authenticating to Azure
     # resources (e.g. Blob Storage). The first one that yields a token wins;
@@ -30,7 +28,7 @@ class Settings(BaseSettings):
 
     # Service principle authentication
     TIMESERIES_CLIENT_ID: str = Field(default="38ab1ef9-d7ea-4e2b-ae4c-466ca70a1093")
-    TIMESERIES_CLIENT_SECRET: Optional[str] = Field(default=None)
+    TIMESERIES_CLIENT_SECRET: str | None = Field(default=None)
     USE_OMNIA_TIMESERIES_TEST_ENVIRONMENT: bool = Field(default=True)
 
     # OpenTelemetry

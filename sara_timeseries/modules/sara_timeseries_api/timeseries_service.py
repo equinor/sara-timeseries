@@ -1,11 +1,8 @@
+import logging
 from http import HTTPStatus
 
-from typing import List, Dict
-import logging
-
 from fastapi import HTTPException
-
-from omnia_timeseries.models import TimeseriesModel, MessageModel
+from omnia_timeseries.models import MessageModel, TimeseriesModel
 
 from sara_timeseries.modules.sara_timeseries_api.models import (
     CO2ConcentrationRequestModel,
@@ -68,7 +65,7 @@ class TimeseriesService:
     ) -> DatapointsResponseModel:
         co2_measurements_description: str = "CO2Measurement"
         try:
-            timeseries: List[TimeseriesModel] = (
+            timeseries: list[TimeseriesModel] = (
                 self.omnia_service.read_timeseries_by_description_and_facility(
                     description=co2_measurements_description,
                     facility=request.facility,
@@ -82,7 +79,7 @@ class TimeseriesService:
             raise
 
         try:
-            data: List[Dict] = self.omnia_service.read_data_from_multiple_timeseries(
+            data: list[dict] = self.omnia_service.read_data_from_multiple_timeseries(
                 timeseries=timeseries,
                 start_time=request.start_time,
                 end_time=request.end_time,
@@ -99,7 +96,7 @@ class TimeseriesService:
     def get_co2_concentration(self, request: CO2ConcentrationRequestModel) -> float:
         co2_measurements_description: str = "CO2Measurement"
         try:
-            timeseries: List[TimeseriesModel] = (
+            timeseries: list[TimeseriesModel] = (
                 self.omnia_service.read_timeseries_by_description_and_facility_and_name(
                     description=co2_measurements_description,
                     facility=request.facility,
@@ -123,7 +120,7 @@ class TimeseriesService:
             raise e
 
         try:
-            data: List[Dict] = self.omnia_service.read_data_from_multiple_timeseries(
+            data: list[dict] = self.omnia_service.read_data_from_multiple_timeseries(
                 timeseries=timeseries,
                 start_time=request.task_start_time,
                 end_time=request.task_end_time,

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
@@ -102,9 +102,9 @@ class InsightsService:
 
         return html
 
-    def publish_CO2_report(self, html: bytes, token: str) -> List[UploadedFile]:
+    def publish_CO2_report(self, html: bytes, token: str) -> list[UploadedFile]:
         sara_sap_api = SaraSapApi(base_url="http://localhost:3017", token=token)
-        uploaded_files: List[UploadedFile] = sara_sap_api.post_upload_co2_report(
+        uploaded_files: list[UploadedFile] = sara_sap_api.post_upload_co2_report(
             html=html
         )
         return uploaded_files
