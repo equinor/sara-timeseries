@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from azure.core.credentials import TokenCredential
 from azure.identity import (
@@ -20,7 +20,7 @@ _WI_REQUIRED_ENV_VARS: tuple[str, ...] = (
 _SUPPORTED_METHODS: tuple[str, ...] = ("WorkloadIdentity", "AzureCli", "ClientSecret")
 
 
-def _build_workload_identity() -> Optional[TokenCredential]:
+def _build_workload_identity() -> TokenCredential | None:
     """Return a ``WorkloadIdentityCredential`` if WI env vars are injected.
 
     Outside a WI-enabled pod (local dev, CI), the SDK's constructor raises
@@ -32,15 +32,15 @@ def _build_workload_identity() -> Optional[TokenCredential]:
     return WorkloadIdentityCredential()
 
 
-def _build_azure_cli() -> Optional[TokenCredential]:
+def _build_azure_cli() -> TokenCredential | None:
     return AzureCliCredential()
 
 
 def _build_client_secret(
-    tenant_id: Optional[str],
-    client_id: Optional[str],
-    client_secret: Optional[str],
-) -> Optional[TokenCredential]:
+    tenant_id: str | None,
+    client_id: str | None,
+    client_secret: str | None,
+) -> TokenCredential | None:
     """Return a ``ClientSecretCredential`` if all three values are set, else ``None``."""
     if not (tenant_id and client_id and client_secret):
         return None
@@ -54,9 +54,9 @@ def _build_client_secret(
 def build_credential(
     methods: list[str],
     *,
-    tenant_id: Optional[str] = None,
-    client_id: Optional[str] = None,
-    client_secret: Optional[str] = None,
+    tenant_id: str | None = None,
+    client_id: str | None = None,
+    client_secret: str | None = None,
 ) -> TokenCredential:
     """Build a TokenCredential from an ordered list of method names.
 
@@ -97,7 +97,7 @@ def build_credential(
             f"Supported: {list(_SUPPORTED_METHODS)}"
         )
 
-    factories: dict[str, Callable[[], Optional[TokenCredential]]] = {
+    factories: dict[str, Callable[[], TokenCredential | None]] = {
         "WorkloadIdentity": _build_workload_identity,
         "AzureCli": _build_azure_cli,
         "ClientSecret": lambda: _build_client_secret(

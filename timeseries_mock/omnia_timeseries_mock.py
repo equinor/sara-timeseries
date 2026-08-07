@@ -1,5 +1,4 @@
 import logging
-from typing import Tuple
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
@@ -18,20 +17,20 @@ def _log() -> None:
 
 
 @app.route("/health", methods=["GET"])
-def health() -> Tuple[str, int]:
+def health() -> tuple[str, int]:
     _log()
     return jsonify({"status": "ok"}), 200
 
 
 @app.route("/timeseries/get-or-add", methods=["POST"])
-def get_or_add_timeseries() -> Tuple[str, int]:
+def get_or_add_timeseries() -> tuple[str, int]:
     _log()
     fake_id = f"mock-{uuid4()}"
     return jsonify({"data": {"items": [{"id": fake_id}]}}), 200
 
 
 @app.route("/timeseries/<series_id>", methods=["GET"])
-def get_timeseries_by_id(series_id: str) -> Tuple[str, int]:
+def get_timeseries_by_id(series_id: str) -> tuple[str, int]:
     _log()
     item = {
         "id": series_id,
@@ -48,25 +47,25 @@ def get_timeseries_by_id(series_id: str) -> Tuple[str, int]:
 
 
 @app.route("/timeseries/<series_id>", methods=["DELETE"])
-def delete_timeseries(series_id: str) -> Tuple[str, int]:
+def delete_timeseries(series_id: str) -> tuple[str, int]:
     _log()
     return jsonify({"message": f"deleted {series_id}"}), 200
 
 
 @app.route("/timeseries/search", methods=["GET"])
-def search_timeseries() -> Tuple[str, int]:
+def search_timeseries() -> tuple[str, int]:
     _log()
     return jsonify({"data": {"items": []}}), 200
 
 
 @app.route("/timeseries/<series_id>/datapoints", methods=["POST"])
-def write_data(series_id: str) -> Tuple[str, int]:
+def write_data(series_id: str) -> tuple[str, int]:
     _log()
     return jsonify({"statusCode": 0, "message": "ok", "traceId": "mock-trace-id"}), 200
 
 
 @app.route("/datapoints/multi", methods=["POST"])
-def get_multi_datapoints() -> Tuple[str, int]:
+def get_multi_datapoints() -> tuple[str, int]:
     _log()
     body = request.get_json(silent=True) or {}
     requests = body.get("requests", [])

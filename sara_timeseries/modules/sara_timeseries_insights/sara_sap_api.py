@@ -1,7 +1,5 @@
-from typing import List
-
-from pydantic import BaseModel, ConfigDict, Field
 import requests
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MaintenanceRecordMinimalWithActiveStatusIds(BaseModel):
@@ -23,7 +21,7 @@ class PreventiveWorkOrder(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     work_order_id: str = Field(alias="workOrderId")
-    maintenance_records: List[MaintenanceRecordMinimalWithActiveStatusIds] = Field(
+    maintenance_records: list[MaintenanceRecordMinimalWithActiveStatusIds] = Field(
         alias="maintenanceRecords", default_factory=list
     )
     created_date_time: str | None = Field(alias="createdDateTime")
@@ -54,7 +52,7 @@ class SaraSapApi:
         work_order = PreventiveWorkOrder.model_validate(response.json())
         return work_order
 
-    def post_upload_co2_report(self, html: bytes) -> List[UploadedFile]:
+    def post_upload_co2_report(self, html: bytes) -> list[UploadedFile]:
         files = [("files", ("co2_report.html", html, "text/html"))]
         response = requests.post(
             url=f"{self.base_url}/insights-uploader",

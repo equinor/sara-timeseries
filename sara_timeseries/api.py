@@ -1,4 +1,5 @@
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,9 +22,7 @@ class API:
         self.timeseries_controller: TimeseriesController = timeseries_controller
         self.insights_controller: InsightsController = insights_controller
 
-    def create_app(
-        self, lifespan: Optional[Callable[[FastAPI], Any]] = None
-    ) -> FastAPI:
+    def create_app(self, lifespan: Callable[[FastAPI], Any] | None = None) -> FastAPI:
         app = FastAPI(
             lifespan=lifespan,
             swagger_ui_oauth2_redirect_url="/oauth2-redirect",
