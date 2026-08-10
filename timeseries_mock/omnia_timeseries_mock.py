@@ -7,12 +7,13 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
+
 def _log() -> None:
     logging.info(f"[MOCK] {request.method} {request.path}")
     try:
         if request.is_json:
             logging.info(f"[MOCK] JSON: {request.get_json()}")
-    except Exception:
+    except Exception:  # noqa: BLE001
         pass
 
 
