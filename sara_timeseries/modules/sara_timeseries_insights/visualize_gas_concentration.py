@@ -101,18 +101,18 @@ def add_backdrop_image_to_figure(
     north_min, north_max = corners.bottom_left.north, corners.top_left.north
 
     figure.add_layout_image(
-        dict(
-            source=image_source,
-            xref="x",
-            yref="y",
-            x=east_min,
-            y=north_max,
-            sizex=east_max - east_min,
-            sizey=north_max - north_min,
-            sizing="stretch",
-            opacity=opacity,
-            layer="below",
-        )
+        {
+            "source": image_source,
+            "xref": "x",
+            "yref": "y",
+            "x": east_min,
+            "y": north_max,
+            "sizex": east_max - east_min,
+            "sizey": north_max - north_min,
+            "sizing": "stretch",
+            "opacity": opacity,
+            "layer": "below",
+        }
     )
 
     if lock_to_bounds:
@@ -192,16 +192,16 @@ def build_metric_traces_with_individual_color_bars(
                 mode="markers",
                 visible=(index == 0),
                 name=display_name,
-                marker=dict(
-                    size=10,
-                    color=dataframe[metric_column],
-                    colorscale=colorscale_name,
-                    cmin=cmin,
-                    cmax=cmax,
-                    showscale=True,
-                    colorbar=dict(title=display_name, x=1.02),
-                    line=dict(width=0.5, color="black"),
-                ),
+                marker={
+                    "size": 10,
+                    "color": dataframe[metric_column],
+                    "colorscale": colorscale_name,
+                    "cmin": cmin,
+                    "cmax": cmax,
+                    "showscale": True,
+                    "colorbar": {"title": display_name, "x": 1.02},
+                    "line": {"width": 0.5, "color": "black"},
+                },
                 # Plotly property must be 'customdata'; Python variable is 'custom_data'
                 customdata=custom_data,
                 hovertemplate=(
@@ -227,14 +227,14 @@ def build_dropdown_buttons_with_dynamic_color_bars(
         visibility_mask[index] = True
         label = dropdown_label_for_metric.get(metric_column, metric_column)
         buttons.append(
-            dict(
-                label=label,
-                method="update",
-                args=[
+            {
+                "label": label,
+                "method": "update",
+                "args": [
                     {"visible": visibility_mask},
                     {"title.text": f"{title_base} — {label}"},
                 ],
-            )
+            }
         )
     return buttons
 
@@ -343,34 +343,34 @@ def make_gas_concentration_figure(
         title_text=f"{title} — {first_label}",
         title_x=0.5,
         template="plotly_white",
-        margin=dict(l=40, r=90, t=110, b=40),
+        margin={"l": 40, "r": 90, "t": 110, "b": 40},
         xaxis_title="East (m)",
         yaxis_title="North (m)",
         updatemenus=[
-            dict(
-                type="dropdown",
-                direction="down",
-                showactive=True,
-                x=0,
-                y=0.95,
-                xanchor="left",
-                yanchor="top",
-                borderwidth=1,
-                buttons=buttons,
-            )
+            {
+                "type": "dropdown",
+                "direction": "down",
+                "showactive": True,
+                "x": 0,
+                "y": 0.95,
+                "xanchor": "left",
+                "yanchor": "top",
+                "borderwidth": 1,
+                "buttons": buttons,
+            }
         ],
         annotations=[
-            dict(
-                text=date_range_text,
-                x=0.5,
-                y=1.01,
-                xref="paper",
-                yref="paper",
-                xanchor="center",
-                yanchor="bottom",
-                showarrow=False,
-                font=dict(size=12, color="gray"),
-            )
+            {
+                "text": date_range_text,
+                "x": 0.5,
+                "y": 1.01,
+                "xref": "paper",
+                "yref": "paper",
+                "xanchor": "center",
+                "yanchor": "bottom",
+                "showarrow": False,
+                "font": {"size": 12, "color": "gray"},
+            }
         ],
     )
     return figure

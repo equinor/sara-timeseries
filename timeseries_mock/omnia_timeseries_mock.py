@@ -5,16 +5,16 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
-
+logger = logging.getLogger(__name__)
 
 
 def _log() -> None:
-    logging.info(f"[MOCK] {request.method} {request.path}")
+    logger.info(f"[MOCK] {request.method} {request.path}")
     try:
         if request.is_json:
-            logging.info(f"[MOCK] JSON: {request.get_json()}")
-    except Exception:  # noqa: BLE001
-        pass
+            logger.info(f"[MOCK] JSON: {request.get_json()}")
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Error logging JSON: {e}")
 
 
 @app.route("/health", methods=["GET"])

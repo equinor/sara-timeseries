@@ -38,7 +38,7 @@ class TimeseriesService:
 
         if not timeseries_id:
             logger.error("Failed to get or add timeseries: ID is None")
-            raise
+            raise ValueError("Failed to get or add timeseries: ID is None")
 
         try:
             response: MessageModel = self.omnia_service.add_datapoint_to_timeseries(
