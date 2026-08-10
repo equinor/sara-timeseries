@@ -112,12 +112,12 @@ class TimeseriesService:
                     status_code=HTTPStatus.NOT_FOUND,
                     detail="No CO2 concentration timeseries found for the given inspection name and facility",
                 )
-        except Exception as e:
+        except Exception:
             logger.error(
                 f"Failed to retrieve timeseries for description {co2_measurements_description}, "
                 f"facility {request.facility} and name {request.inspection_name}"
             )
-            raise e
+            raise
 
         try:
             data: list[dict] = self.omnia_service.read_data_from_multiple_timeseries(
@@ -146,6 +146,6 @@ class TimeseriesService:
                     detail="Multiple CO2 concentrations found",
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to retrieve data from CO2 measurement timeseries")
-            raise e
+            raise

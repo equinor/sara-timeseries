@@ -36,7 +36,7 @@ class TimeseriesController:
         )
         try:
             return self.timeseries_service.ingest_datapoint(datapoint=data)
-        except Exception:
+        except Exception:  # noqa: BLE001
             raise HTTPException(status_code=500, detail="Failed to ingest data")
 
     def get_co2_measurements(
@@ -54,7 +54,7 @@ class TimeseriesController:
         )
         try:
             return self.timeseries_service.get_co2_measurements(request)
-        except Exception:
+        except Exception:  # noqa: BLE001
             raise HTTPException(
                 status_code=500, detail="Failed to retrieve CO2 measurements"
             )
@@ -70,9 +70,9 @@ class TimeseriesController:
     ) -> float:
         try:
             return self.timeseries_service.get_co2_concentration(request)
-        except HTTPException as e:
-            raise e
-        except Exception:
+        except HTTPException:
+            raise
+        except Exception:  # noqa: BLE001
             raise HTTPException(
                 status_code=500, detail="Failed to retrieve CO2 concentration"
             )
