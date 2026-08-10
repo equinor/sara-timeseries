@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, Mock
 
 import pytest
@@ -46,7 +46,7 @@ def test_add_datapoint_to_timeseries(omnia_service: OmniaService) -> None:
     result = omnia_service.add_datapoint_to_timeseries(
         timeseries_id="test_id",
         value=123.45,
-        timestamp=datetime(2023, 1, 1, 12, 0, 0),
+        timestamp=datetime(2023, 1, 1, 12, 0, 0, 0, tzinfo=UTC),
     )
 
     assert result == mock_response
