@@ -42,24 +42,6 @@ jobs:
       registry_username: ${{ github.actor }}
       registry_password: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-push-dev-image-to-aurora-container-registry:
-    name: Build and push dev image to aurora container registry
-    needs: [get-short-sha]
-    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
-    permissions:
-      contents: read
-      packages: write
-    with:
-      registry: ghcr.io
-      image_name: ${{ github.repository }}
-      tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
-      secondary_tag: dev
-      path_to_dockerfile: Dockerfile
-      path_to_context: .
-    secrets:
-      registry_username: ${{ secrets.ROBOTICS_AURORADEVACR_USERNAME }}
-      registry_password: ${{ secrets.ROBOTICS_AURORADEVACR_PASSWORD }}
-
   deploy:
     name: Update deployment in Development
     needs: [build-and-push-dev-image-to-ghcr, get-short-sha]
