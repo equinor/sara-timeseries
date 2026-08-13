@@ -47,23 +47,6 @@ jobs:
       registry_username: ${{ github.actor }}
       registry_password: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-push-latest-release-image-to-aurora-prod-container-registry:
-    name: Build and push latest release image to aurora prod container registry
-    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
-    permissions:
-      contents: read
-      packages: write
-    with:
-      registry: auroraprodacr.azurecr.io
-      image_name: robotics/sara-timeseries
-      tag: ${{ github.event.release.tag_name }}
-      secondary_tag: latest
-      path_to_dockerfile: Dockerfile
-      path_to_context: .
-    secrets:
-      registry_username: ${{ secrets.ROBOTICS_AURORAPRODACR_USERNAME }}
-      registry_password: ${{ secrets.ROBOTICS_AURORAPRODACR_PASSWORD }}
-
   build-and-push-latest-release-image-to-robotics-staging-container-registry:
     name: Build and push latest release image to robotics staging container registry
     uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
@@ -83,11 +66,11 @@ jobs:
 
   update-deployment-in-staging:
     name: Update deployment in Staging
-    needs: build-and-push-latest-release-image-to-aurora-prod-container-registry
+    needs: build-and-push-latest-release-image-to-robotics-staging-container-registry
     uses: equinor/armada/.github/workflows/update_kubernetes_deployment.yml@main
     with:
       environment: staging
-      registry: auroraprodacr.azurecr.io
+      registry: roboticsstagingacr.azurecr.io
       image_name: robotics/sara-timeseries
       tag: ${{ github.event.release.tag_name }}
       author_name: ${{ github.event.release.author.login }}
