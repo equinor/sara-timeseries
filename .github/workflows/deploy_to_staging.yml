@@ -14,39 +14,6 @@ on:
     types: [published]
 
 jobs:
-  build-and-push-latest-release-image-to-aurora-dev-container-registry:
-    name: Build and push latest release image to aurora dev container registry
-    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
-    permissions:
-      contents: read
-      packages: write
-    with:
-      registry: auroradevacr.azurecr.io
-      image_name: robotics/sara-timeseries
-      tag: ${{ github.event.release.tag_name }}
-      path_to_dockerfile: Dockerfile
-      path_to_context: .
-    secrets:
-      registry_username: ${{ secrets.ROBOTICS_AURORADEVACR_USERNAME }}
-      registry_password: ${{ secrets.ROBOTICS_AURORADEVACR_PASSWORD }}
-
-  build-and-push-latest-release-image-to-github-container-registry:
-    name: Build and push latest release image to github container registry
-    uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
-    permissions:
-      contents: read
-      packages: write
-    with:
-      registry: ghcr.io
-      image_name: ${{ github.repository }}
-      tag: ${{ github.event.release.tag_name }}
-      secondary_tag: latest
-      path_to_dockerfile: Dockerfile
-      path_to_context: .
-    secrets:
-      registry_username: ${{ github.actor }}
-      registry_password: ${{ secrets.GITHUB_TOKEN }}
-
   build-and-push-latest-release-image-to-robotics-staging-container-registry:
     name: Build and push latest release image to robotics staging container registry
     uses: equinor/armada/.github/workflows/build_and_publish_docker_image_to_container_registry.yml@main
