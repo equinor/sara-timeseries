@@ -32,15 +32,15 @@ jobs:
       contents: read
       packages: write
     with:
-      registry: ghcr.io
-      image_name: ${{ github.repository }}
+      registry: roboticsstagingacr.azurecr.io
+      image_name: robotics/sara-timeseries
       tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
       secondary_tag: dev
       path_to_dockerfile: Dockerfile
       path_to_context: .
     secrets:
-      registry_username: ${{ github.actor }}
-      registry_password: ${{ secrets.GITHUB_TOKEN }}
+      registry_username: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_USERNAME }}
+      registry_password: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_PASSWORD }}
 
   deploy:
     name: Update deployment in Development
@@ -48,8 +48,8 @@ jobs:
     uses: equinor/armada/.github/workflows/update_kubernetes_deployment.yml@main
     with:
       environment: development
-      registry: ghcr.io
-      image_name: ${{ github.repository }}
+      registry: roboticsstagingacr.azurecr.io
+      image_name: robotics/sara-timeseries
       tag: "dev.${{ needs.get-short-sha.outputs.tag }}"
       author_email: ${{ github.event.head_commit.author.email }}
       author_name: ${{ github.event.head_commit.author.name }}
