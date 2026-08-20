@@ -18,7 +18,8 @@ jobs:
       image_name: robotics/sara-timeseries
       staging_registry: roboticsstagingacr.azurecr.io
       production_registry: roboticsprodacr.azurecr.io
-      infrastructure_repository: equinor/analytics-infrastructure
+      infrastructure_repository: equinor/robotics-infrastructure
+      kustomization_base_path: k8s_kustomize/analytics/overlays
       author_name: ${{ github.actor }}
     secrets:
       staging_registry_username: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_USERNAME }}

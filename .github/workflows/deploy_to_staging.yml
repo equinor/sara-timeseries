@@ -19,7 +19,8 @@ jobs:
       registry: roboticsstagingacr.azurecr.io
       image_name: robotics/sara-timeseries
       tag: ${{ github.event.release.tag_name }}
-      infrastructure_repository: equinor/analytics-infrastructure
+      infrastructure_repository: equinor/robotics-infrastructure
+      kustomization_base_path: k8s_kustomize/analytics/overlays
       author_name: ${{ github.event.release.author.login }}
     secrets:
       registry_username: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_USERNAME }}
