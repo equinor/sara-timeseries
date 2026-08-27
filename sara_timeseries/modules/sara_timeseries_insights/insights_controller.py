@@ -28,10 +28,11 @@ class InsightsController:
             description="Retrieve a consolidated overview of CO2 measurements for the given facility and time window",
         ),
     ) -> list[dict]:
-        logger.info(
-            f"Received request to consolidate CO2 measurements for facility {request.facility} and time window "
-            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",
+        request_context: str = (
+            f"consolidated CO2 measurements for facility {request.facility} and time window "
+            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}"
         )
+        logger.info(f"Received request to retrieve {request_context}")
         try:
             data: DataFrame = self.insights_service.consolidate_co2_measurements(
                 facility=request.facility,
@@ -43,7 +44,7 @@ class InsightsController:
             ]  # TODO: Remove when going to prod
             return data.to_dict("records")
         except Exception:
-            logger.exception("Failed to retrieve consolidated CO2 measurements")
+            logger.exception(f"Failed to retrieve {request_context}")
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail="Failed to retrieve consolidated CO2 measurements",
@@ -59,10 +60,11 @@ class InsightsController:
         ),
         user: User = Depends(azure_scheme),
     ) -> StreamingResponse:
-        logger.info(
-            f"Received request to create and publish CO2 report for facility {request.facility} and time window "
-            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",
+        request_context: str = (
+            f"CO2 report for facility {request.facility} and time window "
+            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}"
         )
+        logger.info(f"Received request to create and publish {request_context}")
         try:
             html = self.insights_service.create_CO2_report(
                 facility=request.facility,
@@ -73,7 +75,7 @@ class InsightsController:
             self.insights_service.publish_CO2_report(html=html, token=token)
             return StreamingResponse(iter([html]), media_type="text/html")
         except Exception:
-            logger.exception("Failed to create and publish CO2 report.")
+            logger.exception(f"Failed to create and publish {request_context}")
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail="Failed to create and publish CO2 report",
