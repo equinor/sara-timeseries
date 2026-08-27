@@ -14,6 +14,10 @@ permissions:
 
 jobs:
   deploy:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     uses: equinor/armada/.github/workflows/deploy_to_staging.yml@main
     with:
       registry: roboticsstagingacr.azurecr.io
