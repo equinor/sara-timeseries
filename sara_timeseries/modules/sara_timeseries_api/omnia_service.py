@@ -73,17 +73,12 @@ class OmniaService:
             assetId=asset_id,
             metadata=metadata if metadata is not None else {},
         )
-        try:
-            response: GetTimeseriesResponseModel = self.api.get_or_add_timeseries(
-                [time_series_request_item]
-            )
-            if response["data"]["items"]:
-                return response["data"]["items"][0]["id"]
-            else:
-                raise ValueError("No items returned in response")
-        except Exception as e:
-            logger.error(f"Error retrieving or adding timeseries: {e}")
-            raise
+        response: GetTimeseriesResponseModel = self.api.get_or_add_timeseries(
+            [time_series_request_item]
+        )
+        if not response["data"]["items"]:
+            raise ValueError("No items returned in response")
+        return response["data"]["items"][0]["id"]
 
     def add_datapoint_to_timeseries(
         self, timeseries_id: str, value: float, timestamp: datetime
@@ -100,12 +95,7 @@ class OmniaService:
         )
         data = DatapointsPostRequestModel(datapoints=[datapoint])
 
-        try:
-            x = self.api.write_data(timeseries_id, data)
-            return x
-        except Exception as e:
-            logger.error(f"Error writing to timeseries: {e}")
-            raise
+        return self.api.write_data(timeseries_id, data)
 
     def cleanup_timeseries(self, timeseries_id: str) -> None:
         """
@@ -113,12 +103,8 @@ class OmniaService:
         Deletes the timeseries from the API.
         """
         # TODO: Remove when we use PROD environment
-        try:
-            response = self.api.delete_timeseries_by_id(timeseries_id)
-            logger.info(f"Successfully deleted timeseries {timeseries_id}: {response}")
-        except Exception as e:
-            logger.error(f"Error deleting timeseries {timeseries_id}: {e}")
-            raise
+        response = self.api.delete_timeseries_by_id(timeseries_id)
+        logger.info(f"Successfully deleted timeseries {timeseries_id}: {response}")
 
     def read_all_timeseries_by_description(
         self, description: str
