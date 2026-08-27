@@ -30,14 +30,15 @@ class TimeseriesController:
             description="Data to be forwarded",
         ),
     ) -> ResponseModel:
-        logger.info(
-            f"Received request to ingest datapoint with name {data.name} to facility {data.facility} "
+        request_context: str = (
+            f"datapoint with name {data.name} to facility {data.facility} "
             f"with timestamp {data.timestamp.isoformat()}"
         )
+        logger.info(f"Received request to ingest {request_context}")
         try:
             return self.timeseries_service.ingest_datapoint(datapoint=data)
         except Exception:
-            logger.exception("Failed to ingest data")
+            logger.exception(f"Failed to ingest {request_context}")
             raise HTTPException(status_code=500, detail="Failed to ingest data")
 
     def get_co2_measurements(
@@ -49,14 +50,15 @@ class TimeseriesController:
             description="Retrieve all CO2 measurements for the given facility and time window",
         ),
     ) -> DatapointsResponseModel:
-        logger.info(
-            f"Received request to retrieve CO2 measurements for facility {request.facility} and time window "
-            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}",
+        request_context: str = (
+            f"CO2 measurements for facility {request.facility} and time window "
+            f"{request.start_time.isoformat()} to {request.end_time.isoformat()}"
         )
+        logger.info(f"Received request to retrieve {request_context}")
         try:
             return self.timeseries_service.get_co2_measurements(request)
         except Exception:
-            logger.exception("Failed to retrieve CO2 measurements")
+            logger.exception(f"Failed to retrieve {request_context}")
             raise HTTPException(
                 status_code=500, detail="Failed to retrieve CO2 measurements"
             )
@@ -70,12 +72,18 @@ class TimeseriesController:
             description="Retrieve CO2 concentration for a single task",
         ),
     ) -> float:
+        request_context: str = (
+            f"CO2 concentration for inspection {request.inspection_name}, facility {request.facility} "
+            f"and task time range {request.task_start_time.isoformat()} to "
+            f"{request.task_end_time.isoformat()}"
+        )
+        logger.info(f"Received request to retrieve {request_context}")
         try:
             return self.timeseries_service.get_co2_concentration(request)
         except HTTPException:
             raise
         except Exception:
-            logger.exception("Failed to retrieve CO2 concentration")
+            logger.exception(f"Failed to retrieve {request_context}")
             raise HTTPException(
                 status_code=500, detail="Failed to retrieve CO2 concentration"
             )
