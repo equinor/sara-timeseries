@@ -13,8 +13,8 @@ def _log() -> None:
     try:
         if request.is_json:
             logger.info(f"[MOCK] JSON: {request.get_json()}")
-    except Exception as e:  # noqa: BLE001
-        logger.error(f"Error logging JSON: {e}")
+    except Exception:
+        logger.exception("Error logging JSON")
 
 
 @app.route("/health", methods=["GET"])
