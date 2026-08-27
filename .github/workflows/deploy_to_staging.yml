@@ -18,6 +18,7 @@ jobs:
     with:
       registry: roboticsstagingacr.azurecr.io
       image_name: robotics/sara-timeseries
+      push_to_ghcr: true
       tag: ${{ github.event.release.tag_name }}
       infrastructure_repository: equinor/robotics-infrastructure
       kustomization_base_path: k8s_kustomize/analytics/overlays
