@@ -27,6 +27,12 @@ jobs:
       infrastructure_repository: equinor/robotics-infrastructure
       kustomization_base_path: k8s_kustomize/analytics/overlays
       author_name: ${{ github.event.release.author.login }}
+      # Authenticate to the registry with a federated credential instead
+      # of the registry password. The environment below is what the OIDC
+      # subject binds to on the Azure side.
+      environment: Staging
+      use_oidc: true
+      azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     secrets:
       registry_username: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_USERNAME }}
       registry_password: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_PASSWORD }}
