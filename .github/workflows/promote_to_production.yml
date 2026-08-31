@@ -33,8 +33,4 @@ jobs:
       environment: Production
       azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     secrets:
-      staging_registry_username: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_USERNAME }}
-      staging_registry_password: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_PASSWORD }}
-      production_registry_username: ${{ secrets.ROBOTICS_ROBOTICSPRODACR_USERNAME }}
-      production_registry_password: ${{ secrets.ROBOTICS_ROBOTICSPRODACR_PASSWORD }}
       deploy_key: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}
