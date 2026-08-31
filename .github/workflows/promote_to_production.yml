@@ -25,6 +25,13 @@ jobs:
       infrastructure_repository: equinor/robotics-infrastructure
       kustomization_base_path: k8s_kustomize/analytics/overlays
       author_name: ${{ github.actor }}
+      # Authenticate to both registries with a federated credential
+      # instead of the registry passwords. The identity holds AcrPull
+      # on staging and AcrPush on production, because promotion reads
+      # from one and writes to the other.
+      use_oidc: true
+      environment: Production
+      azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     secrets:
       staging_registry_username: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_USERNAME }}
       staging_registry_password: ${{ secrets.ROBOTICS_ROBOTICSSTAGINGACR_PASSWORD }}
