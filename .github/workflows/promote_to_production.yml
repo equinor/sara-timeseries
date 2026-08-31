@@ -13,6 +13,10 @@ permissions:
 
 jobs:
   promote:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     uses: equinor/armada/.github/workflows/promote_to_production.yml@main
     with:
       image_name: robotics/sara-timeseries
