@@ -32,6 +32,4 @@ jobs:
       use_oidc: true
       azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     secrets:
-      registry_username: ${{ secrets.ROBOTICS_ROBOTICSDEVACR_USERNAME }}
-      registry_password: ${{ secrets.ROBOTICS_ROBOTICSDEVACR_PASSWORD }}
       deploy_key: ${{ secrets.ANALYTICS_INFRASTRUCTURE_DEPLOY_KEY }}
