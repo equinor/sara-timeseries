@@ -808,7 +808,7 @@ wheels = [
 [[package]]
 name = "omnia-timeseries"
 version = "2.0.0"
-source = { git = "https://github.com/equinor/omnia-timeseries-python.git?rev=e4b51dcc05af751763cec9dd8970644bb2b43e5b#e4b51dcc05af751763cec9dd8970644bb2b43e5b" }
+source = { git = "https://github.com/equinor/omnia-timeseries-python.git?rev=bc61c7ab5052ce8ea7ed4baf488ff6cd362fe88b#bc61c7ab5052ce8ea7ed4baf488ff6cd362fe88b" }
 dependencies = [
     { name = "azure-core" },
     { name = "azure-identity" },
@@ -1404,7 +1404,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'dev'" },
     { name = "mypy", marker = "extra == 'dev'" },
     { name = "numpy" },
-    { name = "omnia-timeseries", git = "https://github.com/equinor/omnia-timeseries-python.git?rev=e4b51dcc05af751763cec9dd8970644bb2b43e5b" },
+    { name = "omnia-timeseries", git = "https://github.com/equinor/omnia-timeseries-python.git?rev=bc61c7ab5052ce8ea7ed4baf488ff6cd362fe88b" },
     { name = "opentelemetry-api" },
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-instrumentation-fastapi" },
