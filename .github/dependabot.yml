@@ -1,7 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: uv
-    directory: /
+    directories:
+      - /
+      - /timeseries_mock
     allow:
       - dependency-type: all
     schedule:
@@ -9,28 +11,9 @@ updates:
       day: monday
     open-pull-requests-limit: 5
     groups:
-      python-patch-minor:
+      python-dependencies:
         patterns: ["*"]
-        update-types: ["patch", "minor"]
-      python-major:
-        patterns: ["*"]
-        update-types: ["major"]
-
-  - package-ecosystem: uv
-    directory: /timeseries_mock
-    allow:
-      - dependency-type: all
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
-    groups:
-      python-patch-minor:
-        patterns: ["*"]
-        update-types: ["patch", "minor"]
-      python-major:
-        patterns: ["*"]
-        update-types: ["major"]
+        applies-to: version-updates
 
   - package-ecosystem: docker
     directory: /
